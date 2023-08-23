@@ -1,4 +1,4 @@
-# hPyT - Hide Python Titlebar
+# hPyT - Hack Python Titlebar
 
 A package to manipulate window titlebar in GUI applications.
 **Supports Both Windows 11 and 10**
