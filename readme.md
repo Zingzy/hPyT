@@ -15,6 +15,12 @@ https://github.com/Zingzy/hPyT/assets/90309290/cf361814-dacc-4704-8828-3d1ad83c6
 - WxPython
 - support for more libraries soon...
 
+## Installing
+
+```powershell
+pip install hPyT==1.1.1
+```
+
 ## Importing
 
 ```python
