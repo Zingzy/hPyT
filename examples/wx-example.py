@@ -6,10 +6,9 @@ import wx
 
 app = wx.App()
 
-window = wx.Frame(parent=None, title='hTkT')
+window = get_wxPython()()
 
-title_bar.hide(window) 
-# title_bar.unhide(window)
+window.hide_maximize_minimize_button()
 
 window.Show()
 app.MainLoop()

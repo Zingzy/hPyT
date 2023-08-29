@@ -1,15 +1,14 @@
 from hPyT import *
 
 # ---------- PyQT5 ----------
-
-import sys
 from PyQt5 import QtWidgets
+import sys
+
 
 app = QtWidgets.QApplication(sys.argv)
-window = QtWidgets.QWidget()
+window = get_PyQt5()()
 
-title_bar.hide(window) # hides title bar
-# title_bar.unhide(window)
+window.hide_maximize_minimize_button()
 
 window.show()
 sys.exit(app.exec_())

@@ -2,14 +2,13 @@ from hPyT import *
 
 # ---------- PySide2 ----------
 
-from PySide2.QtWidgets import QApplication, QWidget
+from PySide2.QtWidgets import QApplication
 import sys
 
 app = QApplication(sys.argv)
-window = QWidget()
+window = get_PySide2()()
 
-title_bar.hide(window) # hides title bar
-# title_bar.unhide(window)
+window.hide_maximize_minimize_button()
 
 window.show()
 app.exec_()
