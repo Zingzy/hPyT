@@ -18,7 +18,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/cf361814-dacc-4704-8828-3d1ad83c6
 ## Installing
 
 ```powershell
-pip install hPyT==1.1.2
+pip install hPyT==1.1.3
 ```
 
 ## Importing
@@ -92,9 +92,11 @@ opacity.set(window, 0.5) # sets the window opacity to 50%
 ## Flashing Window
 
 ```python
-window_flash.flash(window, 10) # flashes the window 10 times
+window_flash.flash(window, 10, 100) # flashes the window 10 times with 50ms interval
 # window_flash.stop(window) # stops the flashing immediately
 ```
+
+*Flashing Interval starts from 10ms, **default 1000ms***
 
 ![Flashing Window](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/flashing.gif)
 
@@ -102,7 +104,11 @@ window_flash.flash(window, 10) # flashes the window 10 times
 
 ## hPyT Changelog
 
-### v1.1.2
+### v1.1.3
+
+- Add flashing inverval support
+
+### v1.1.3
 
 - Add window flashing support
 - Add window opacity support

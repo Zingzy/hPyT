@@ -129,7 +129,7 @@ class all_stuffs():
 
 class window_flash:
     @classmethod
-    def flash(cls, window, count=5, interval=0):
+    def flash(cls, window, count=5, interval=1000):
         hwnd = module_find(window)
         info = FLASHWINFO(
             cbSize=ctypes.sizeof(FLASHWINFO),
@@ -166,12 +166,6 @@ class opacity():
             opacity = int(opacity * 255)
 
         ctypes.windll.user32.SetLayeredWindowAttributes(hwnd, 0, opacity, LWA_ALPHA)
-
-class icon:
-    @classmethod
-    def set(cls, window, icon_path):
-        hwnd = module_find(window)
-        ctypes.windll.user32.SendMessageW(hwnd, 128, 1, icon_path)
 
 def module_find(window):
     try:
