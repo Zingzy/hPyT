@@ -108,7 +108,7 @@ window_flash.flash(window, 10, 100) # flashes the window 10 times with 50ms inte
 
 - Add flashing inverval support
 
-### v1.1.3
+### v1.1.2
 
 - Add window flashing support
 - Add window opacity support
