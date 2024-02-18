@@ -3,9 +3,9 @@
 A package to manipulate window titlebar in GUI applications.
 **Supports Both Windows 11 and 10**
 
-https://github.com/Zingzy/hPyT/assets/90309290/cf361814-dacc-4704-8828-3d1ad83c6485
+https://github.com/Zingzy/hPyT/assets/90309290/8e7bd413-0673-4986-866b-31aace04e9db
 
-**You can download the above app from the [github releases](https://github.com/Zingzy/hPyT/releases) to test out the package before installing/using it in your projects**
+**You can download the above app from the [github releases](https://github.com/Zingzy/hPyT/releases/tag/v1.1.0/) to test out the package before installing/using it in your projects**
 
 ## Supported Libraries
 
