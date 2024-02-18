@@ -5,8 +5,8 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='hPyT',
-    version='1.1.0',
-    description='Hide Python Titlebar - A package to manipulate window titlebar in GUI applications.',
+    version='1.1.2',
+    description='Hack Python Titlebar - A package to manipulate window titlebar in GUI applications made using python.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='zingzy',
@@ -14,6 +14,7 @@ setup(
     license='MIT',
     packages=find_packages(),
     classifiers=[
+        'Intended Audience :: Developers',
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
@@ -23,7 +24,8 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11' 
+        'Programming Language :: Python :: 3.11' ,
+        "Operating System :: Microsoft :: Windows",
     ],
     keywords='Tkinter wxpython pyqt pyside GUI window controls decorations hide show titlebar',
 )
