@@ -23,4 +23,9 @@ maximize_button.disable(window) # disables maximize button
 minimize_button.disable(window) # disables minimize button
 # minimize_button.enable(window)
 
+window_flash.flash(window, 10) # flashes the window 10 times
+# window_flash.stop(window) # stops flashing immediately
+
+opacity.set(window, 0.5) # sets the opacity of the window to 50%
+
 window.mainloop()
