@@ -7,7 +7,7 @@ https://raw.githubusercontent.com/zingzy/hPyT/main/assets/hPyT.preview.app.mp4
 
 **You can download the above app from the [github releases](https://github.com/Zingzy/hPyT/releases/tag/v1.1.0/) to test out the package before installing/using it in your projects**
 
----
+<br>
 
 <details>
 
@@ -38,7 +38,7 @@ https://raw.githubusercontent.com/zingzy/hPyT/main/assets/hPyT.preview.app.mp4
 	- [✏️ Stylize text](#️-stylize-text)
 		- [Miscellaneous](#miscellaneous)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
-		- [v1.1.4](#v114)
+		- [v1.2.0](#v120)
 		- [v1.1.3](#v113)
 		- [v1.1.2](#v112)
 		- [v1.1.1](#v111)
@@ -58,7 +58,7 @@ https://raw.githubusercontent.com/zingzy/hPyT/main/assets/hPyT.preview.app.mp4
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.1.4
+pip install hPyT==1.2.0
 ```
 
 ## 📥 Importing
@@ -258,7 +258,7 @@ print(stylize_text("Your Custom Text", style=1)) # stylizes your text
 
 ## 📜 hPyT Changelog
 
-### v1.1.4
+### v1.2.0
 
 - Add support for rainbow titlebar
 - Add support for styling title text
