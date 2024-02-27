@@ -1,7 +1,7 @@
 """
 hPyT - Hide Python Titlebar
 Author - zingzy
-version - 1.1.3
+version - 1.1.4
 License - MIT
 Homepage - https://github.com/zingzy/hPyT
 """
@@ -24,4 +24,4 @@ __all__ = [
     'window_flash',
 ]
 
-__version__ = '1.1.3'
+__version__ = '1.1.4'
