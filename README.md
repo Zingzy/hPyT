@@ -3,7 +3,7 @@
 A package to manipulate windows and titlebar of GUI applications made using python
 **Supports Both Windows 11 and 10**
 
-https://raw.githubusercontent.com/zingzy/hPyT/main/assets/hPyT.preview.app.mp4
+https://github.com/Zingzy/hPyT/assets/90309290/c61b3142-80d6-4c07-b8e3-65694faf945b
 
 **You can download the above app from the [github releases](https://github.com/Zingzy/hPyT/releases/tag/v1.1.0/) to test out the package before installing/using it in your projects**
 
@@ -215,7 +215,7 @@ window_frame.restore(window) # restores the window
 
 ```python
 window_animation.circle_motion(window, count=5, interval=5, radius=30)
-# moves the window in a circular motion 5 times with 5ms interval and 50px radius
+# moves the window in a circular motion 5 times with 5ms interval and 30px radius
 ```
 
 ![Circle Motion](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/circle_motion.gif)
