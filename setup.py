@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='hPyT',
-    version='1.2.0',
+    version='1.2.1',
     description='Hack Python Titlebar - A package to manipulate windows and titlebar of GUI applications made using python.',
     long_description=long_description,
     long_description_content_type='text/markdown',

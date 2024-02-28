@@ -38,7 +38,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/c61b3142-80d6-4c07-b8e3-65694faf9
 	- [✏️ Stylize text](#️-stylize-text)
 		- [Miscellaneous](#miscellaneous)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
-		- [v1.2.0](#v120)
+		- [v1.2.1](#v120)
 		- [v1.1.3](#v113)
 		- [v1.1.2](#v112)
 		- [v1.1.1](#v111)
@@ -58,7 +58,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/c61b3142-80d6-4c07-b8e3-65694faf9
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.2.0
+pip install hPyT==1.2.1
 ```
 
 ## 📥 Importing
@@ -258,7 +258,7 @@ print(stylize_text("Your Custom Text", style=1)) # stylizes your text
 
 ## 📜 hPyT Changelog
 
-### v1.2.0
+### v1.2.1
 
 - Add support for rainbow titlebar
 - Add support for styling title text
