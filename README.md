@@ -78,7 +78,7 @@ title_bar.hide(window) # hides full titlebar
 # title_bar.unhide(window)
 ```
 
-![Hidden Title Bar](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/titlebar.png)
+![image](https://github.com/littlewhitecloud/hPyT/assets/71159641/03e533fe-c42a-4d84-b138-176a73ad7977)
 
 ## 🌈 Rainbow TitleBar
 
@@ -226,14 +226,14 @@ window_animation.circle_motion(window, count=5, interval=5, radius=30)
 ### Verical Shake
 
 ```python
-window_animation.vertical_shake(window, count=5, interval=5, apmlitude=20)
+window_animation.vertical_shake(window, count=5, interval=5, amplitude=20)
 # shakes the window vertically 5 times with 5ms interval and 10px distance
 ```
 
 ### Horizontal Shake
 
 ```python
-window_animation.horizontal_shake(window, count=5, interval=5, apmlitude=20)
+window_animation.horizontal_shake(window, count=5, interval=5, amplitude=20)
 # shakes the window horizontally 5 times with 5ms interval and 10px distance
 ```
 

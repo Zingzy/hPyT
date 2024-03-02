@@ -1,32 +1,39 @@
 try:
-    import threading
     import ctypes
     import math
+    import threading
+    from ctypes.wintypes import HWND, RECT, UINT
 except ImportError:
     raise ImportError("hPtT import Error : No Windows Enviorment Found")
 
 set_window_pos = ctypes.windll.user32.SetWindowPos
 set_window_long = ctypes.windll.user32.SetWindowLongPtrW
-get_window_long = ctypes.windll.user32.GetWindowLongPtrW
+get_window_long = ctypes.windll.user32.GetWindowLongPtrA
 def_window_proc = ctypes.windll.user32.DefWindowProcW
+call_window_proc = ctypes.windll.user32.CallWindowProcW
+flash_window_ex = ctypes.windll.user32.FlashWindowEx
+
 
 GWL_STYLE = -16
+GWL_EXSTYLE = -20
+GWL_WNDPROC = -4
 
-WS_MINIMIZEBOX = 131072
-WS_MAXIMIZEBOX = 65536
+WS_MINIMIZEBOX = 0x00020000
+WS_MAXIMIZEBOX = 0x00010000
+WS_CAPTION = 0x00C00000
+WS_SYSMENU = 0x00080000
 
-WS_SYSMENU = 524288
+WS_EX_LAYERED = 524288
+
+WM_NCCALCSIZE = 0x0083
+WM_NCHITTEST = 0x0084
 
 SWP_NOZORDER = 4
 SWP_NOMOVE = 2
 SWP_NOSIZE = 1
 SWP_FRAMECHANGED = 32
 
-GWL_EXSTYLE = -20
-WS_EX_LAYERED = 524288
 LWA_ALPHA = 2
-
-WS_CAPTION = 12582912
 
 FLASHW_STOP = 0
 FLASHW_CAPTION = 1
@@ -35,6 +42,7 @@ FLASHW_ALL = 3
 FLASHW_TIMER = 4
 FLASHW_TIMERNOFG = 12
 
+
 class FLASHWINFO(ctypes.Structure):
     _fields_ = [("cbSize", ctypes.c_uint),
                 ("hwnd", ctypes.c_void_p),
@@ -42,22 +50,50 @@ class FLASHWINFO(ctypes.Structure):
                 ("uCount", ctypes.c_uint),
                 ("dwTimeout", ctypes.c_uint)]
 
-flash_window_ex = ctypes.windll.user32.FlashWindowEx
+class PWINDOWPOS(ctypes.Structure):
+    _fields_ = [
+        ("hWnd", HWND),
+        ("hwndInsertAfter", HWND),
+        ("x", ctypes.c_int),
+        ("y", ctypes.c_int),
+        ("cx", ctypes.c_int),
+        ("cy", ctypes.c_int),
+        ("flags", UINT),
+    ]
+
+class NCCALCSIZE_PARAMS(ctypes.Structure):
+    _fields_ = [("rgrc", RECT * 3), ("lppos", ctypes.POINTER(PWINDOWPOS))]
 
 rnbtbs = []
 titles = {}
 
 class title_bar:
     @classmethod
-    def hide(cls, window):
+    def hide(cls, window) -> None:
+        def handle(hwnd: int, msg: int, wp: int, lp: int) -> int:
+            if msg == WM_NCCALCSIZE and wp:
+                lpncsp = NCCALCSIZE_PARAMS.from_address(lp)
+                lpncsp.rgrc[0].top -= 6
+
+            return call_window_proc(*map(ctypes.c_uint64, (globals()[old], hwnd, msg, wp, lp)))
+
+        old, new = "old_wndproc", "new_wndproc"
+        prototype = ctypes.WINFUNCTYPE(ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64)
+
         hwnd = module_find(window)
+
+        globals()[old] = None
+        globals()[new] = prototype(handle)
+        globals()[old] = get_window_long(hwnd, GWL_WNDPROC)
+        set_window_long(hwnd, GWL_WNDPROC, globals()[new])
+        
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style & ~ WS_CAPTION
         set_window_long(hwnd, GWL_STYLE, new_style)
         set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
 
     @classmethod
-    def unhide(cls, window):
+    def unhide(cls, window) -> None:
         hwnd = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_CAPTION
@@ -66,7 +102,7 @@ class title_bar:
 
 class maximize_minimize_button():
     @classmethod
-    def hide(cls, window):
+    def hide(cls, window) -> None:
         hwnd = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style & ~ WS_MAXIMIZEBOX & ~ WS_MINIMIZEBOX
@@ -74,7 +110,7 @@ class maximize_minimize_button():
         set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
     
     @classmethod
-    def unhide(cls, window):
+    def unhide(cls, window) -> None:
         hwnd = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_MAXIMIZEBOX | WS_MINIMIZEBOX
@@ -83,7 +119,7 @@ class maximize_minimize_button():
 
 class maximize_button:
     @classmethod
-    def disable(cls, window):
+    def disable(cls, window) -> None:
         hwnd = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style & ~WS_MAXIMIZEBOX
@@ -91,7 +127,7 @@ class maximize_button:
         set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
     
     @classmethod
-    def enable(cls, window):
+    def enable(cls, window) -> None:
         hwnd = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_MAXIMIZEBOX
@@ -100,7 +136,7 @@ class maximize_button:
 
 class minimize_button:
     @classmethod
-    def disable(cls, window):
+    def disable(cls, window) -> None:
         hwnd = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style & ~WS_MINIMIZEBOX
@@ -108,7 +144,7 @@ class minimize_button:
         set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
     
     @classmethod
-    def enable(cls, window):
+    def enable(cls, window) -> None:
         hwnd = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_MINIMIZEBOX
@@ -117,15 +153,16 @@ class minimize_button:
 
 class all_stuffs():
     @classmethod
-    def hide(cls, window):
+    def hide(cls, window) -> None:
         hwnd = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style & ~ WS_SYSMENU
         set_window_long(hwnd, GWL_STYLE, new_style)
         set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
+
     
     @classmethod
-    def unhide(cls, window):
+    def unhide(cls, window) -> None:
         hwnd = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_SYSMENU
@@ -134,7 +171,7 @@ class all_stuffs():
 
 class window_flash:
     @classmethod
-    def flash(cls, window, count=5, interval=1000):
+    def flash(cls, window, count=5, interval=1000) -> None:
         hwnd = module_find(window)
         info = FLASHWINFO(
             cbSize=ctypes.sizeof(FLASHWINFO),
@@ -146,7 +183,7 @@ class window_flash:
         flash_window_ex(ctypes.pointer(info))
 
     @classmethod
-    def stop(cls, window):
+    def stop(cls, window) -> None:
         hwnd = module_find(window)
         info = FLASHWINFO(
             cbSize=ctypes.sizeof(FLASHWINFO),
@@ -159,7 +196,7 @@ class window_flash:
 
 class opacity():
     @classmethod
-    def set(cls, window, opacity):
+    def set(cls, window, opacity) -> None:
         hwnd = module_find(window)
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
@@ -174,7 +211,7 @@ class opacity():
 
 class title_bar_color:
     @classmethod
-    def set(cls, window, color):
+    def set(cls, window, color) -> None:
         color = convert_color(color)
         hwnd = module_find(window)
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
@@ -185,7 +222,7 @@ class title_bar_color:
 
 class title_bar_text_color:
     @classmethod
-    def set(cls, window, color):
+    def set(cls, window, color) -> None:
         color = convert_color(color)
         hwnd = module_find(window)
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
@@ -196,7 +233,7 @@ class title_bar_text_color:
 
 class rainbow_title_bar:
     @classmethod
-    def start(cls, window, interval=3, color_stops=3):
+    def start(cls, window, interval=3, color_stops=3) -> None:
         def color_changer(hwnd, interval):
             r, g, b = 200, 0, 0
             while hwnd in rnbtbs:
@@ -234,7 +271,7 @@ class rainbow_title_bar:
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
     @classmethod
-    def stop(cls, window):
+    def stop(cls, window) -> None:
         hwnd = module_find(window)
         if hwnd in rnbtbs:
             rnbtbs.remove(hwnd)
@@ -243,7 +280,7 @@ class rainbow_title_bar:
 
 class window_frame:
     @classmethod
-    def center(cls, window):
+    def center(cls, window) -> None:
         hwnd = module_find(window)
 
         # Get the window's current position and size
@@ -264,7 +301,7 @@ class window_frame:
         ctypes.windll.user32.SetWindowPos(hwnd, 0, new_x, new_y, 0, 0, 0x0001)
 
     @classmethod
-    def center_relative(cls, window_parent, window_child):
+    def center_relative(cls, window_parent, window_child) -> None:
         hwnd_parent = module_find(window_parent)
         hwnd_child = module_find(window_child)
 
@@ -288,33 +325,33 @@ class window_frame:
         ctypes.windll.user32.SetWindowPos(hwnd_child, 0, new_x, new_y, 0, 0, 0x0001)
 
     @classmethod
-    def move(cls, window, x, y):
+    def move(cls, window, x, y) -> None:
         hwnd = module_find(window)
         set_window_pos(hwnd, 0, x, y, 0, 0, 0x0001)
 
     @classmethod
-    def resize(cls, window, width, height):
+    def resize(cls, window, width, height) -> None:
         hwnd = module_find(window)
         set_window_pos(hwnd, 0, 0, 0, width, height, 0x0001)
 
     @classmethod
-    def minimize(cls, window):
+    def minimize(cls, window) -> None:
         hwnd = module_find(window)
         ctypes.windll.user32.ShowWindow(hwnd, 6)
 
     @classmethod
-    def maximize(cls, window):
+    def maximize(cls, window) -> None:
         hwnd = module_find(window)
         ctypes.windll.user32.ShowWindow(hwnd, 3)
 
     @classmethod
-    def restore(cls, window):
+    def restore(cls, window) -> None:
         hwnd = module_find(window)
         ctypes.windll.user32.ShowWindow(hwnd, 9)
 
 class window_animation:
     @classmethod
-    def circle_motion(cls, window, count=5, interval=5, radius=20):
+    def circle_motion(cls, window, count=5, interval=5, radius=20) -> None:
         def motion():
             hwnd = module_find(window)
             rect = ctypes.wintypes.RECT()
@@ -333,7 +370,7 @@ class window_animation:
         thread.start()
 
     @classmethod
-    def vertical_shake(cls, window, count=5, interval=3, amplitude=20):
+    def vertical_shake(cls, window, count=5, interval=3, amplitude=20) -> None:
         def motion():
             hwnd = module_find(window)
             rect = ctypes.wintypes.RECT()
@@ -350,7 +387,7 @@ class window_animation:
         thread.start()
 
     @classmethod
-    def horizontal_shake(cls, window, count=5, interval=3, amplitude=20):
+    def horizontal_shake(cls, window, count=5, interval=3, amplitude=20) -> None:
         def motion():
             hwnd = module_find(window)
             rect = ctypes.wintypes.RECT()
@@ -368,12 +405,12 @@ class window_animation:
 
 class title_text:
     @classmethod
-    def set(cls, window, title):
+    def set(cls, window, title) -> None:
         hwnd = module_find(window)
         ctypes.windll.user32.SetWindowTextW(hwnd, title)
 
     @classmethod
-    def stylize(cls, window, style=1):
+    def stylize(cls, window, style=1) -> None:
         hwnd = module_find(window)
         if hwnd not in titles:
             title = ctypes.create_unicode_buffer(1024)
@@ -383,13 +420,13 @@ class title_text:
         ctypes.windll.user32.SetWindowTextW(hwnd, title)
 
     @classmethod
-    def reset(cls, window):
+    def reset(cls, window) -> None:
         hwnd = module_find(window)
         if hwnd in titles:
             ctypes.windll.user32.SetWindowTextW(hwnd, titles[hwnd])
             del titles[hwnd]
 
-def stylize_text(text, style):
+def stylize_text(text: str, style: int) -> str:
     normal = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
     styles = [
         "𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ1234567890",
@@ -410,7 +447,7 @@ def stylize_text(text, style):
     translation_table = str.maketrans(normal, styles[style - 1])
     return text.translate(translation_table)
 
-def convert_color(color):
+def convert_color(color: tuple) -> int:
     if isinstance(color, tuple) and len(color) == 3:  # RGB format
         r, g, b = color
         return int(f"{b}{g}{r}", 16)
@@ -420,7 +457,7 @@ def convert_color(color):
     else:
         raise ValueError('Invalid color format. Expected RGB tuple or HEX string.')
 
-def module_find(window):
+def module_find(window) -> int:
     try:
         window.update() # for tk
         return ctypes.windll.user32.GetParent(window.winfo_id())
