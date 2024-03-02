@@ -81,7 +81,7 @@ class title_bar:
         prototype = ctypes.WINFUNCTYPE(ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64)
 
         hwnd = module_find(window)
-        print(hwnd)
+
         globals()[old] = None
         globals()[new] = prototype(handle)
         globals()[old] = get_window_long(hwnd, GWL_WNDPROC)
