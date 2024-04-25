@@ -31,6 +31,9 @@ opacity.set(window, 0.5) # sets the opacity of the window to 50%
 rainbow_title_bar.start(window) # starts the rainbow effect on taskbar
 # rainbow_title_bar.stop(window) # stops the rainbow effect on taskbar
 
+rainbow_border.start(window) # starts the rainbow effect on border
+# rainbow_border.stop(window) # stops the rainbow effect on border
+
 # check out the readme.md file for other functions
 
 window.mainloop()
