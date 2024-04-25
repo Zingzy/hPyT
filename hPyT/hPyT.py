@@ -4,7 +4,7 @@ try:
     import threading
     from ctypes.wintypes import HWND, RECT, UINT
 except ImportError:
-    raise ImportError("hPtT import Error : No Windows Enviorment Found")
+    raise ImportError("hPyT import Error : No Windows Enviorment Found")
 
 set_window_pos = ctypes.windll.user32.SetWindowPos
 set_window_long = ctypes.windll.user32.SetWindowLongPtrW
@@ -65,6 +65,7 @@ class NCCALCSIZE_PARAMS(ctypes.Structure):
     _fields_ = [("rgrc", RECT * 3), ("lppos", ctypes.POINTER(PWINDOWPOS))]
 
 rnbtbs = []
+rnbbcs = []
 titles = {}
 
 class title_bar:
@@ -220,6 +221,15 @@ class title_bar_color:
         ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(color)), 4)
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
+    @classmethod
+    def reset(cls, window) -> None:
+        hwnd = module_find(window)
+        old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
+        new_ex_style = old_ex_style | WS_EX_LAYERED
+        set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(-1)), 4)
+        set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)
+
 class title_bar_text_color:
     @classmethod
     def set(cls, window, color) -> None:
@@ -230,6 +240,35 @@ class title_bar_text_color:
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
         ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 36, ctypes.byref(ctypes.c_int(color)), 4)
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+
+    @classmethod
+    def reset(cls, window) -> None:
+        hwnd = module_find(window)
+        old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
+        new_ex_style = old_ex_style | WS_EX_LAYERED
+        set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 36, ctypes.byref(ctypes.c_int(-1)), 4)
+        set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)
+
+class border_color:
+    @classmethod
+    def set(cls, window, color) -> None:
+        color = convert_color(color)
+        hwnd = module_find(window)
+        old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
+        new_ex_style = old_ex_style | WS_EX_LAYERED
+        set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4)
+        set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+
+    @classmethod
+    def reset(cls, window) -> None:
+        hwnd = module_find(window)
+        old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
+        new_ex_style = old_ex_style | WS_EX_LAYERED
+        set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(-1)), 4)
+        set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)
 
 class rainbow_title_bar:
     @classmethod
@@ -256,7 +295,7 @@ class rainbow_title_bar:
                     b = max(0, b - color_stops)
                 ctypes.windll.kernel32.Sleep(interval)
             else:
-                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(0)), 4)
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(-1)), 4)
 
         hwnd = module_find(window)
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
@@ -277,6 +316,53 @@ class rainbow_title_bar:
             rnbtbs.remove(hwnd)
         else:
             raise ValueError('Rainbow title bar is not running on this window.')
+
+class rainbow_border:
+    @classmethod
+    def start(cls, window, interval=3, color_stops=3) -> None:
+        def color_changer(hwnd, interval):
+            r, g, b = 200, 0, 0
+            while hwnd in rnbbcs:
+                color = (r << 16) | (g << 8) | b
+
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4)
+                if r < 255 and g == 0 and b == 0:
+                    r = min(255, r + color_stops)
+                elif r == 255 and g < 255 and b == 0:
+                    g = min(255, g + color_stops)
+                elif r > 0 and g == 255 and b == 0:
+                    r = max(0, r - color_stops)
+                elif g == 255 and b < 255 and r == 0:
+                    b = min(255, b + color_stops)
+                elif g > 0 and b == 255 and r == 0:
+                    g = max(0, g - color_stops)
+                elif b == 255 and r < 255 and g == 0:
+                    r = min(255, r + color_stops)
+                elif b > 0 and r == 255 and g == 0:
+                    b = max(0, b - color_stops)
+                ctypes.windll.kernel32.Sleep(interval)
+            else:
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(-1)), 4)
+
+        hwnd = module_find(window)
+        old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
+        new_ex_style = old_ex_style | WS_EX_LAYERED
+        set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
+
+        rnbbcs.append(hwnd)
+        thread = threading.Thread(target=color_changer, args=(hwnd, interval))
+        thread.daemon = True
+        thread.start()
+
+        set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+
+    @classmethod
+    def stop(cls, window) -> None:
+        hwnd = module_find(window)
+        if hwnd in rnbbcs:
+            rnbbcs.remove(hwnd)
+        else:
+            raise ValueError('Rainbow border is not running on this window.')
 
 class window_frame:
     @classmethod

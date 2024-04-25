@@ -19,6 +19,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [📥 Importing](#-importing)
 	- [Hide/Unhide Title Bar](#hideunhide-title-bar)
 	- [🌈 Rainbow TitleBar](#-rainbow-titlebar)
+	- [🌈 Rainbow Border](#-rainbow-border)
 	- [Hide/Unhide both Maximize and Minimize Buttons (Completely Hides both buttons)](#hideunhide-both-maximize-and-minimize-buttons-completely-hides-both-buttons)
 	- [Hide/Unhide All Buttons or Stuffs](#hideunhide-all-buttons-or-stuffs)
 	- [Enable/Disable Maximize Button](#enabledisable-maximize-button)
@@ -27,6 +28,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [⚡ Flashing Window](#-flashing-window)
 	- [🎨 Custom TitleBar Color](#-custom-titlebar-color)
 	- [🖌️ Custom TitleBar Text Color](#️-custom-titlebar-text-color)
+	- [🖌️ Custom Border Color](#️-custom-border-color)
 	- [💻 Window Management](#-window-management)
 		- [Center a window on the screen](#center-a-window-on-the-screen)
 		- [Center a secondary window relative to the primary window](#center-a-secondary-window-relative-to-the-primary-window)
@@ -38,6 +40,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [✏️ Stylize text](#️-stylize-text)
 		- [Miscellaneous](#miscellaneous)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
+		- [v1.3.0](#v130)
 		- [v1.2.1](#v121)
 		- [v1.2.0](#v120)
 		- [v1.1.3](#v113)
@@ -59,7 +62,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.2.1
+pip install hPyT==1.3.0
 ```
 
 ## 📥 Importing
@@ -87,9 +90,19 @@ rainbow_title_bar.start(window, interval=5) # starts the rainbow titlebar
 # rainbow_title_bar.stop(window) # stops the rainbow titlebar
 ```
 
-*`interval` is the time in milliseconds in which the color would change*
+> [!NOTE]
+> *`interval` is the time in milliseconds in which the color would change*
 
 ![Rainbow TitleBar](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/rainbow_titlebar.gif)
+
+## 🌈 Rainbow Border
+
+```python
+rainbow_border.start(window, interval=4) # starts the rainbow border
+# rainbow_border.stop(window) # stops the rainbow border
+```
+
+![Rainbow Border](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/rainbow_border.gif)
 
 ## Hide/Unhide both Maximize and Minimize Buttons (Completely Hides both buttons)
 
@@ -153,9 +166,11 @@ window_flash.flash(window, 10, 100) # flashes the window 10 times with 100ms int
 
 ```python
 title_bar_color.set(window, '#ff00ff') # sets the titlebar color to magenta
+# title_bar_color.reset(window) # resets the titlebar color to default
 ```
 
-*You can pass any valid color in `Hex` or `RGB` format*
+> [!NOTE]
+> *You can pass any valid color in `Hex` or `RGB` format*
 
 ![Custom TitleBar Color](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/titlebar_color.png)
 
@@ -163,11 +178,19 @@ title_bar_color.set(window, '#ff00ff') # sets the titlebar color to magenta
 
 ```python
 title_text_color.set(window, '#ff00ff') # sets the titlebar text color to magenta
+# title_text_color.reset(window) # resets the titlebar text color to default
 ```
 
-*You can pass any valid color in `Hex` or `RGB` format*
-
 ![Custom TitleBar Text Color](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/title_text_color.png)
+
+## 🖌️ Custom Border Color
+
+```python
+border_color.set(window, '#ff00ff') # sets the border color to magenta
+# border_color.reset(window) # resets the border color to default
+```
+
+![Custom Border Color](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/border_color.png)
 
 ## 💻 Window Management
 
@@ -258,6 +281,13 @@ print(stylize_text("Your Custom Text", style=1)) # stylizes your text
 <br>
 
 ## 📜 hPyT Changelog
+
+### v1.3.0
+
+- Add support for setting custom border color
+- Add support for rainbow border color effect
+- Add support for resetting the titleBar color and titleText color
+- Fix an issue which caused the titleBar to appear black after the rainbow titleBar effect was stopped
 
 ### v1.2.1
 

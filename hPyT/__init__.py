@@ -1,7 +1,7 @@
 """
 hPyT - Hack Python Titlebar
 Author - zingzy
-version - 1.2.1
+version - 1.3.0
 License - MIT
 Homepage - https://github.com/zingzy/hPyT
 """
@@ -13,9 +13,11 @@ from .hPyT import (
     minimize_button,
     opacity,
     rainbow_title_bar,
+    rainbow_border,
     title_bar,
     title_bar_color,
     title_bar_text_color,
+    border_color,
     title_text,
     window_animation,
     window_flash,
@@ -36,6 +38,8 @@ __all__ = [
     "window_frame",
     "window_animation",
     "title_text",
+    "border_color",
+    "rainbow_border",
 ]
 
-__version__ = "1.2.1"
+__version__ = "1.3.0"
