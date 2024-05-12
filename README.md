@@ -218,7 +218,7 @@ child_window = CTkToplevel()
 
 window_frame.center_relative(window, child_window)
 
-window.bind("<Configure>", lambda event: window.center_relative(window, child_window))
+window.bind("<Configure>", lambda event: window_frame.center_relative(window, child_window))
 ```
 
 ![Center Relative Example](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/center_relative_example.gif)
