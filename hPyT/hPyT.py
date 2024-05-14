@@ -562,4 +562,8 @@ def module_find(window) -> int:
         return gdk_window.get_xid()
     except:
         pass
+    try:
+        return window.root_window.get_window_info().window
+    except:
+        pass
     return window    # others / notfound
