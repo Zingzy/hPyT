@@ -272,7 +272,7 @@ class border_color:
 
 class rainbow_title_bar:
     @classmethod
-    def start(cls, window, interval=3, color_stops=3) -> None:
+    def start(cls, window, interval=5, color_stops=5) -> None:
         def color_changer(hwnd, interval):
             r, g, b = 200, 0, 0
             while hwnd in rnbtbs:
@@ -319,7 +319,7 @@ class rainbow_title_bar:
 
 class rainbow_border:
     @classmethod
-    def start(cls, window, interval=3, color_stops=3) -> None:
+    def start(cls, window, interval=5, color_stops=5) -> None:
         def color_changer(hwnd, interval):
             r, g, b = 200, 0, 0
             while hwnd in rnbbcs:
