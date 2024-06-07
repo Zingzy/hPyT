@@ -39,7 +39,9 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 		- [Horizontal Shake](#horizontal-shake)
 	- [✏️ Stylize text](#️-stylize-text)
 		- [Miscellaneous](#miscellaneous)
+	- [Workaround for other libraries](#workaround-for-other-libraries)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
+	- [v1.3.1](#v131)
 		- [v1.3.0](#v130)
 		- [v1.2.1](#v121)
 		- [v1.2.0](#v120)
@@ -57,7 +59,8 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 - PyQt
 - PySide
 - WxPython
-- support for more libraries soon...
+- Kivy
+- And many more
 
 ## 📦 Installing
 
@@ -213,12 +216,22 @@ window_frame.center_relative(window, child_window)
 ```python
 window = CTk()
 window.title("Primary Window")
+window.geometry('600x300')
+window_frame.center(window)
 
 child_window = CTkToplevel()
 
 window_frame.center_relative(window, child_window)
 
 window.bind("<Configure>", lambda event: window_frame.center_relative(window, child_window))
+
+def on_close():  # this is required to stop the window from centering the child window after the parent window is closed
+	window.unbind("<Configure>")
+	child_window.destroy()
+
+child_window.protocol("WM_DELETE_WINDOW", on_close)
+
+window.mainloop()
 ```
 
 ![Center Relative Example](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/center_relative_example.gif)
@@ -278,9 +291,27 @@ print(stylize_text("Your Custom Text", style=1)) # stylizes your text
 >>> "𝔜𝔬𝔲𝔯 ℭ𝔲𝔰𝔱𝔬𝔪 𝔗𝔢𝔵𝔱"
 ```
 
+## Workaround for other libraries
+
+This menthod is applicable for any other UI library like <kbd>pygame</kbd> <kbd>pySimpleGUI</kbd>, etc. which are not mentioned in the [supported libraries list](#-supported-libraries). You just need to pass the `hwnd` of the window to the functions as demonstrated below.
+
+```python
+from hPyT import *
+import ctypes
+
+hwnd = ctypes.windll.user32.GetActiveWindow()
+rainbow_border.start(hwnd)
+```
+
 <br>
 
 ## 📜 hPyT Changelog
+
+## v1.3.1
+
+- Add support for UI libraries like Kivy, PySimpleGUI, PyGame, etc.
+- Improve the rainbow titlebar & border effects.
+- Improve the center_relative function & examples.
 
 ### v1.3.0
 
