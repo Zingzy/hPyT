@@ -65,7 +65,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.3.0
+pip install hPyT==1.3.1
 ```
 
 ## 📥 Importing
