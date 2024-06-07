@@ -1,7 +1,8 @@
+import math
+import threading
+
 try:
     import ctypes
-    import math
-    import threading
     from ctypes.wintypes import HWND, RECT, UINT
 except ImportError:
     raise ImportError("hPyT import Error : No Windows Enviorment Found")
@@ -563,7 +564,8 @@ def module_find(window) -> int:
     except:
         pass
     try:
-        return window.root_window.get_window_info().window
+        return window.root_window.get_window_info().window # for kivy
     except:
         pass
+
     return window    # others / notfound
