@@ -272,14 +272,16 @@ class border_color:
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)
 
 class rainbow_title_bar:
+    current_color = None
+
     @classmethod
     def start(cls, window, interval=5, color_stops=5) -> None:
         def color_changer(hwnd, interval):
             r, g, b = 200, 0, 0
             while hwnd in rnbtbs:
-                color = (r << 16) | (g << 8) | b
+                cls.current_color = (r << 16) | (g << 8) | b
 
-                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(color)), 4)
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(cls.current_color)), 4)
                 if r < 255 and g == 0 and b == 0:
                     r = min(255, r + color_stops)
                 elif r == 255 and g < 255 and b == 0:
@@ -311,6 +313,14 @@ class rainbow_title_bar:
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
     @classmethod
+    def get_current_color(cls):
+        color = cls.current_color
+        b = (color >> 16) & 0xFF
+        g = (color >> 8) & 0xFF
+        r = color & 0xFF
+        return (r, g, b)
+
+    @classmethod
     def stop(cls, window) -> None:
         hwnd = module_find(window)
         if hwnd in rnbtbs:
@@ -319,14 +329,16 @@ class rainbow_title_bar:
             raise ValueError('Rainbow title bar is not running on this window.')
 
 class rainbow_border:
+    current_color = None
+
     @classmethod
     def start(cls, window, interval=5, color_stops=5) -> None:
         def color_changer(hwnd, interval):
             r, g, b = 200, 0, 0
             while hwnd in rnbbcs:
-                color = (r << 16) | (g << 8) | b
+                cls.current_color = (r << 16) | (g << 8) | b
 
-                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4)
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(cls.current_color)), 4)
                 if r < 255 and g == 0 and b == 0:
                     r = min(255, r + color_stops)
                 elif r == 255 and g < 255 and b == 0:
@@ -356,6 +368,14 @@ class rainbow_border:
         thread.start()
 
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+
+    @classmethod
+    def get_current_color(cls):
+        color = cls.current_color
+        b = (color >> 16) & 0xFF
+        g = (color >> 8) & 0xFF
+        r = color & 0xFF
+        return (r, g, b)
 
     @classmethod
     def stop(cls, window) -> None:
