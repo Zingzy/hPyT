@@ -42,8 +42,8 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 		- [Miscellaneous](#miscellaneous)
 	- [Workaround for other libraries](#workaround-for-other-libraries)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
-	- [v1.3.2](#v132)
-	- [v1.3.1](#v131)
+		- [v1.3.2](#v132)
+		- [v1.3.1](#v131)
 		- [v1.3.0](#v130)
 		- [v1.2.1](#v121)
 		- [v1.2.0](#v120)
@@ -67,7 +67,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.3.1
+pip install hPyT==1.3.2
 ```
 
 ## 📥 Importing
@@ -126,7 +126,7 @@ current_color = rainbow_title_bar.get_current_color() # or rainbow_border.get_cu
 ![synchronization example](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/synchronization-example.gif)
 
 
-**Code for the above illustration available in [`examples/synchronization-example.py`](/blob/main/examples/synchronization-example.py)**
+**Code for the above illustration available in [`/examples/synchronization-example.py`](/examples/synchronization-example.py)**
 
 
 ## Hide/Unhide both Maximize and Minimize Buttons (Completely Hides both buttons)
@@ -329,11 +329,11 @@ rainbow_border.start(hwnd)
 
 ## 📜 hPyT Changelog
 
-## v1.3.2
+### v1.3.2
 
 - Add support for synchronizing the rainbow effect with other ui elements.
 
-## v1.3.1
+### v1.3.1
 
 - Add support for UI libraries like Kivy, PySimpleGUI, PyGame, etc.
 - Improve the rainbow titlebar & border effects.
