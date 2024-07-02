@@ -20,6 +20,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [Hide/Unhide Title Bar](#hideunhide-title-bar)
 	- [🌈 Rainbow TitleBar](#-rainbow-titlebar)
 	- [🌈 Rainbow Border](#-rainbow-border)
+		- [🔄 Synchronizing the Rainbow Effect with other elements](#-synchronizing-the-rainbow-effect-with-other-elements)
 	- [Hide/Unhide both Maximize and Minimize Buttons (Completely Hides both buttons)](#hideunhide-both-maximize-and-minimize-buttons-completely-hides-both-buttons)
 	- [Hide/Unhide All Buttons or Stuffs](#hideunhide-all-buttons-or-stuffs)
 	- [Enable/Disable Maximize Button](#enabledisable-maximize-button)
@@ -41,6 +42,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 		- [Miscellaneous](#miscellaneous)
 	- [Workaround for other libraries](#workaround-for-other-libraries)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
+	- [v1.3.2](#v132)
 	- [v1.3.1](#v131)
 		- [v1.3.0](#v130)
 		- [v1.2.1](#v121)
@@ -106,6 +108,26 @@ rainbow_border.start(window, interval=4) # starts the rainbow border
 ```
 
 ![Rainbow Border](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/rainbow_border.gif)
+
+### 🔄 Synchronizing the Rainbow Effect with other elements
+
+```python
+from hPyT import *
+
+...
+
+rainbow_title_bar.start(window, interval=30) # starts the rainbow titlebar
+# rainbow_border.start(window, interval=30) # also works with rainbow border
+
+current_color = rainbow_title_bar.get_current_color() # or rainbow_border.get_current_color()
+# you can use this color to synchronize the color of other elements with the titlebar
+```
+
+![synchronization example](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/synchronization-example.gif)
+
+
+**Code for the above illustration available in [`examples/synchronization-example.py`](/blob/main/examples/synchronization-example.py)**
+
 
 ## Hide/Unhide both Maximize and Minimize Buttons (Completely Hides both buttons)
 
@@ -306,6 +328,10 @@ rainbow_border.start(hwnd)
 <br>
 
 ## 📜 hPyT Changelog
+
+## v1.3.2
+
+- Add support for synchronizing the rainbow effect with other ui elements.
 
 ## v1.3.1
 
