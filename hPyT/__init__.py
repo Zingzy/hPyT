@@ -1,7 +1,7 @@
 """
 hPyT - Hack Python Titlebar
 Author - zingzy
-version - 1.3.1
+version - 1.3.2
 License - MIT
 Homepage - https://github.com/zingzy/hPyT
 """
@@ -42,4 +42,4 @@ __all__ = [
     "rainbow_border",
 ]
 
-__version__ = "1.3.1"
+__version__ = "1.3.2"
