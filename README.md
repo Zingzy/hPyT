@@ -42,6 +42,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 		- [Miscellaneous](#miscellaneous)
 	- [Workaround for other libraries](#workaround-for-other-libraries)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
+		- [v1.3.3](#v133)
 		- [v1.3.2](#v132)
 		- [v1.3.1](#v131)
 		- [v1.3.0](#v130)
@@ -67,7 +68,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.3.2
+pip install hPyT==1.3.3
 ```
 
 ## 📥 Importing
@@ -126,7 +127,7 @@ current_color = rainbow_title_bar.get_current_color() # or rainbow_border.get_cu
 ![synchronization example](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/synchronization-example.gif)
 
 
-**Code for the above illustration available in [`/examples/synchronization-example.py`](/examples/synchronization-example.py)**
+**Code for the above illustration available in [`/examples/synchronization-example.py`](https://github.com/Zingzy/hPyT/blob/main/examples/synchronization-example.py)**
 
 
 ## Hide/Unhide both Maximize and Minimize Buttons (Completely Hides both buttons)
@@ -328,6 +329,10 @@ rainbow_border.start(hwnd)
 <br>
 
 ## 📜 hPyT Changelog
+
+### v1.3.3
+
+- Fixed taskbar unhide/hide bug
 
 ### v1.3.2
 
