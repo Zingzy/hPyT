@@ -1,7 +1,7 @@
 """
 hPyT - Hack Python Titlebar
 Author - zingzy
-version - 1.3.2
+version - 1.3.3
 License - MIT
 Homepage - https://github.com/zingzy/hPyT
 """
