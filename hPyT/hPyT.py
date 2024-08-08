@@ -84,9 +84,10 @@ class title_bar:
 
         hwnd = module_find(window)
 
-        globals()[old] = None
+        if globals().get(old) is None:
+            globals()[old] = get_window_long(hwnd, GWL_WNDPROC)
+
         globals()[new] = prototype(handle)
-        globals()[old] = get_window_long(hwnd, GWL_WNDPROC)
         set_window_long(hwnd, GWL_WNDPROC, globals()[new])
         
         old_style = get_window_long(hwnd, GWL_STYLE)
@@ -97,6 +98,11 @@ class title_bar:
     @classmethod
     def unhide(cls, window) -> None:
         hwnd = module_find(window)
+
+        if globals().get("old_wndproc") is not None:
+            set_window_long(hwnd, GWL_WNDPROC, globals()["old_wndproc"])
+            globals()["old_wndproc"] = None
+
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_CAPTION
         set_window_long(hwnd, GWL_STYLE, new_style)
