@@ -1018,7 +1018,7 @@ def convert_color(color: tuple[int, int, int]|str) -> int:
     else:
         raise ValueError('Invalid color format. Expected RGB tuple or HEX string.')
 
-def get_accent_color() -> tuple[int, int, int]:
+def get_accent_color() -> str:
     """
     Helper function to get the system accent color.
 
