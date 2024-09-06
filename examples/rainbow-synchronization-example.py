@@ -1,7 +1,12 @@
 import sys
 import os
-from PyQt6.QtWidgets import QApplication, QProgressBar, QVBoxLayout, QWidget, QPushButton
-from PyQt6.QtCore import Qt, QTimer
+try:
+    from PyQt6.QtWidgets import QApplication, QProgressBar, QVBoxLayout, QWidget, QPushButton
+    from PyQt6.QtCore import Qt, QTimer
+except ImportError:
+    os.system("pip install PyQt6")
+    from PyQt6.QtWidgets import QApplication, QProgressBar, QVBoxLayout, QWidget, QPushButton
+    from PyQt6.QtCore import Qt, QTimer
 try:
     import qdarktheme
 except ImportError:
