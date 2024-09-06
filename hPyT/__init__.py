@@ -1,7 +1,7 @@
 """
 hPyT - Hack Python Titlebar
 Author - zingzy
-version - 1.3.3
+version - 1.3.4
 License - MIT
 Homepage - https://github.com/zingzy/hPyT
 """
@@ -22,6 +22,7 @@ from .hPyT import (
     window_animation,
     window_flash,
     window_frame,
+    get_accent_color,
 )
 
 __all__ = [
@@ -40,6 +41,7 @@ __all__ = [
     "title_text",
     "border_color",
     "rainbow_border",
+    "get_accent_color",
 ]
 
 __version__ = "1.3.3"

@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='hPyT',
-    version='1.3.3',
+    version='1.3.4',
     description='Hack Python Titlebar - A package to manipulate windows and titlebar of GUI applications made using python.',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -28,5 +28,6 @@ setup(
         'Programming Language :: Python :: 3.12',
         "Operating System :: Microsoft :: Windows",
     ],
-    keywords='Tkinter wxpython pyqt pyside GUI window controls decorations hide show titlebar',
+    keywords='Tkinter wxpython pyqt pyside GUI window controls decorations hide show titlebar border color animation',
+    python_requires='>=3.6',
 )

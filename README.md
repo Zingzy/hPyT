@@ -28,8 +28,10 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [Opacity](#opacity)
 	- [⚡ Flashing Window](#-flashing-window)
 	- [🎨 Custom TitleBar Color](#-custom-titlebar-color)
+		- [Set TitleBar Color to windows Accent Color](#set-titlebar-color-to-windows-accent-color)
 	- [🖌️ Custom TitleBar Text Color](#️-custom-titlebar-text-color)
 	- [🖌️ Custom Border Color](#️-custom-border-color)
+		- [Set Border Color to windows Accent Color](#set-border-color-to-windows-accent-color)
 	- [💻 Window Management](#-window-management)
 		- [Center a window on the screen](#center-a-window-on-the-screen)
 		- [Center a secondary window relative to the primary window](#center-a-secondary-window-relative-to-the-primary-window)
@@ -39,9 +41,12 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 		- [Verical Shake](#verical-shake)
 		- [Horizontal Shake](#horizontal-shake)
 	- [✏️ Stylize text](#️-stylize-text)
-		- [Miscellaneous](#miscellaneous)
+	- [Miscellaneous](#miscellaneous)
+	- [Get Windows Accent Color](#get-windows-accent-color)
+	- [Stylize text](#stylize-text)
 	- [Workaround for other libraries](#workaround-for-other-libraries)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
+		- [v1.3.4](#v134)
 		- [v1.3.3](#v133)
 		- [v1.3.2](#v132)
 		- [v1.3.1](#v131)
@@ -68,7 +73,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.3.3
+pip install hPyT==1.3.4
 ```
 
 ## 📥 Importing
@@ -127,7 +132,7 @@ current_color = rainbow_title_bar.get_current_color() # or rainbow_border.get_cu
 ![synchronization example](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/synchronization-example.gif)
 
 
-**Code for the above illustration available in [`/examples/synchronization-example.py`](https://github.com/Zingzy/hPyT/blob/main/examples/synchronization-example.py)**
+**Code for the above illustration available in [`/examples/rainbow-synchronization-example.py`](https://github.com/Zingzy/hPyT/blob/main/examples/rainbow-synchronization-example.py)**
 
 
 ## Hide/Unhide both Maximize and Minimize Buttons (Completely Hides both buttons)
@@ -148,7 +153,7 @@ all_stuffs.hide(window) # hides close button
 
 ![Hide Everything](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/all_stuffs.png)
 
-_**Tip:** to hide the text set the window title to ''_
+_**Tip:** to hide the text set the window title to `''`_
 
 ## Enable/Disable Maximize Button
 
@@ -200,6 +205,15 @@ title_bar_color.set(window, '#ff00ff') # sets the titlebar color to magenta
 
 ![Custom TitleBar Color](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/titlebar_color.png)
 
+### Set TitleBar Color to windows Accent Color
+
+```python
+title_bar_color.set_accent(window) # sets the titlebar color to the current windows accent color
+```
+
+![Accent TitleBar](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/accent_titlebar.png)
+
+
 ## 🖌️ Custom TitleBar Text Color
 
 ```python
@@ -217,6 +231,15 @@ border_color.set(window, '#ff00ff') # sets the border color to magenta
 ```
 
 ![Custom Border Color](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/border_color.png)
+
+### Set Border Color to windows Accent Color
+
+```python
+border_color.set_accent(window) # sets the border color to the current windows accent color
+```
+
+![Accent Border](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/accent_border.png)
+
 
 ## 💻 Window Management
 
@@ -306,7 +329,16 @@ title_text.stylize(window, style=1)
 
 ![Stylize Text](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/stylize_text.gif)
 
-### Miscellaneous
+## Miscellaneous
+
+## Get Windows Accent Color
+
+```python
+print(get_accent_color()) # prints the current windows accent color
+>>> '#1b595a'
+```
+
+## Stylize text
 
 ```python
 print(stylize_text("Your Custom Text", style=1)) # stylizes your text
@@ -329,6 +361,12 @@ rainbow_border.start(hwnd)
 <br>
 
 ## 📜 hPyT Changelog
+
+### v1.3.4
+
+- Add method for applying the current windows accent color to the titlebar and border color
+- Add method for getting the current windows accent color
+- Add type annotations and docstrings to functions for better clarity and autocompletion
 
 ### v1.3.3
 
