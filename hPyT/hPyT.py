@@ -361,6 +361,23 @@ class title_bar_color:
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
     @classmethod
+    def set_accent(cls, window) -> None:
+        """
+        Set the color of the title bar of the specified window to the system accent color.
+
+        Args:
+            window (object): The window objec   t to modify (e.g., a Tk instance in Tkinter).
+        """
+
+        hwnd = module_find(window)
+        color = convert_color(get_accent_color())
+        old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
+        new_ex_style = old_ex_style | WS_EX_LAYERED
+        set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(color)), 4)
+        set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+
+    @classmethod
     def reset(cls, window) -> None:
         """
         Reset the color of the title bar of the specified window to the default theme.
@@ -434,6 +451,23 @@ class border_color:
 
         color = convert_color(color)
         hwnd = module_find(window)
+        old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
+        new_ex_style = old_ex_style | WS_EX_LAYERED
+        set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4)
+        set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+
+    @classmethod
+    def set_accent(cls, window) -> None:
+        """
+        Set the color of the border of the specified window to the system accent color.
+
+        Args:
+            window (object): The window object to modify (e.g., a Tk instance in Tkinter).
+        """
+
+        hwnd = module_find(window)
+        color = convert_color(get_accent_color())
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
@@ -983,6 +1017,26 @@ def convert_color(color: tuple[int, int, int]|str) -> int:
         return int(f"{b}{g}{r}", 16)
     else:
         raise ValueError('Invalid color format. Expected RGB tuple or HEX string.')
+
+def get_accent_color() -> tuple[int, int, int]:
+    """
+    Helper function to get the system accent color.
+
+    Returns:
+        tuple: A tuple containing the RGB color values of the system accent color.
+
+    Example:
+        >>> get_accent_color()
+    """
+
+    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Microsoft\Windows\DWM')
+    value, type = winreg.QueryValueEx(key, 'ColorizationAfterglow')
+    winreg.CloseKey(key)
+
+    if len(hex(value)[4:]) == 6:
+        return "#" + hex(value)[4:]
+    else:
+        return "#" + hex(value)[2:]
 
 def module_find(window) -> int:
     """
