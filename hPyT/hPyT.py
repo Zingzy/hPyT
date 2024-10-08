@@ -474,6 +474,9 @@ class border_color:
 
         color = convert_color(color)
         hwnd = module_find(window)
+        if hwnd in accent_color_borders:
+            accent_color_borders.remove(hwnd)
+
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
@@ -489,13 +492,27 @@ class border_color:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
+        def set_border_color_accent(hwnd):
+            old_accent = (-1, -1, -1)
+
+            while hwnd in accent_color_borders:
+                if not old_accent == get_accent_color():
+                    color = convert_color(get_accent_color())
+                    old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
+                    new_ex_style = old_ex_style | WS_EX_LAYERED
+                    set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
+                    ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4)
+                    set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+
+                    old_accent = get_accent_color()
+
+                time.sleep(1)
+
         hwnd = module_find(window)
-        color = convert_color(get_accent_color())
-        old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
-        new_ex_style = old_ex_style | WS_EX_LAYERED
-        set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
-        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4)
-        set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+        accent_color_borders.append(hwnd)
+
+        thread = threading.Thread(target = set_border_color_accent, args = (hwnd,), daemon = True)
+        thread.start()
 
     @classmethod
     def reset(cls, window) -> None:
@@ -507,6 +524,9 @@ class border_color:
         """
 
         hwnd = module_find(window)
+        if hwnd in accent_color_borders:
+            accent_color_borders.remove(hwnd)
+
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
@@ -657,6 +677,9 @@ class rainbow_border:
                 ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(-1)), 4)
 
         hwnd = module_find(window)
+        if hwnd in accent_color_borders:
+            accent_color_borders.remove(hwnd)
+
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
