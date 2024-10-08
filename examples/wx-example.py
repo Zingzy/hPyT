@@ -6,7 +6,7 @@ import wx
 
 app = wx.App()
 
-window = wx.Frame(parent=None, title='hTkT')
+window = wx.Frame(parent=None, title='hPyT')
 
 title_bar.hide(window) 
 # title_bar.unhide(window)
