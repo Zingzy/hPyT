@@ -600,10 +600,13 @@ class rainbow_title_bar:
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
 
-        rnbtbs.append(hwnd)
-        thread = threading.Thread(target=color_changer, args=(hwnd, interval))
-        thread.daemon = True
-        thread.start()
+        if not hwnd in rnbtbs:
+            rnbtbs.append(hwnd)
+            thread = threading.Thread(target=color_changer, args=(hwnd, interval))
+            thread.daemon = True
+            thread.start()
+        else:
+            raise RuntimeError('The rainbow title bar effect is already applied to this window.')
 
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
@@ -696,10 +699,13 @@ class rainbow_border:
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
 
-        rnbbcs.append(hwnd)
-        thread = threading.Thread(target=color_changer, args=(hwnd, interval))
-        thread.daemon = True
-        thread.start()
+        if not hwnd in rnbbcs:
+            rnbbcs.append(hwnd)
+            thread = threading.Thread(target=color_changer, args=(hwnd, interval))
+            thread.daemon = True
+            thread.start()
+        else:
+            raise RuntimeError('The rainbow border effect is already applied to this window.')
 
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
