@@ -396,10 +396,13 @@ class title_bar_color:
         hwnd = module_find(window)
         if hwnd in rnbtbs:
             raise RuntimeError('Failed to change the title bar color. Please stop the rainbow titlebar effect using the `stop()` function.')
-        accent_color_titlebars.append(hwnd)
-
-        thread = threading.Thread(target = set_titlebar_color_accent, args = (hwnd,), daemon = True)
-        thread.start()
+        
+        if not hwnd in accent_color_titlebars:
+            accent_color_titlebars.append(hwnd)
+            thread = threading.Thread(target = set_titlebar_color_accent, args = (hwnd,), daemon = True)
+            thread.start()
+        else:
+            raise RuntimeError("The titlebar's color of the specified window is already set to the accent color.")
 
     @classmethod
     def reset(cls, window) -> None:
@@ -519,10 +522,13 @@ class border_color:
         hwnd = module_find(window)
         if hwnd in rnbbcs:
             raise RuntimeError('Failed to change the border color. Please stop the rainbow border effect using the `stop()` function.')
-        accent_color_borders.append(hwnd)
-
-        thread = threading.Thread(target = set_border_color_accent, args = (hwnd,), daemon = True)
-        thread.start()
+        
+        if not hwnd in accent_color_borders:
+            accent_color_borders.append(hwnd)
+            thread = threading.Thread(target = set_border_color_accent, args = (hwnd,), daemon = True)
+            thread.start()
+        else:
+            raise RuntimeError("The border's color of the specified window is already set to the accent color.")
 
     @classmethod
     def reset(cls, window) -> None:
