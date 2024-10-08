@@ -1,5 +1,6 @@
 import math
 import threading
+import time
 
 try:
     import ctypes
@@ -68,6 +69,8 @@ class NCCALCSIZE_PARAMS(ctypes.Structure):
 
 rnbtbs = []
 rnbbcs = []
+accent_color_titlebars = []
+accent_color_borders = []
 titles = {}
 
 class title_bar:
@@ -354,6 +357,9 @@ class title_bar_color:
 
         color = convert_color(color)
         hwnd = module_find(window)
+        if hwnd in accent_color_titlebars:
+            accent_color_titlebars.remove(hwnd)
+
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
@@ -369,13 +375,27 @@ class title_bar_color:
             window (object): The window objec   t to modify (e.g., a Tk instance in Tkinter).
         """
 
+        def set_titlebar_color_accent(hwnd):
+            old_accent = (-1, -1, -1)
+
+            while hwnd in accent_color_titlebars:
+                if not old_accent == get_accent_color():
+                    color = convert_color(get_accent_color())
+                    old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
+                    new_ex_style = old_ex_style | WS_EX_LAYERED
+                    set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
+                    ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(color)), 4)
+                    set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+                    
+                    old_accent = get_accent_color()
+
+                time.sleep(1)
+
         hwnd = module_find(window)
-        color = convert_color(get_accent_color())
-        old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
-        new_ex_style = old_ex_style | WS_EX_LAYERED
-        set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
-        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(color)), 4)
-        set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+        accent_color_titlebars.append(hwnd)
+
+        thread = threading.Thread(target = set_titlebar_color_accent, args = (hwnd,), daemon = True)
+        thread.start()
 
     @classmethod
     def reset(cls, window) -> None:
@@ -387,6 +407,9 @@ class title_bar_color:
         """
 
         hwnd = module_find(window)
+        if hwnd in accent_color_titlebars:
+            accent_color_titlebars.remove(hwnd)
+
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
@@ -538,6 +561,9 @@ class rainbow_title_bar:
                 ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(-1)), 4)
 
         hwnd = module_find(window)
+        if hwnd in accent_color_titlebars:
+            accent_color_titlebars.remove(hwnd)
+
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
