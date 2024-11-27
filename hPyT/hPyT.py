@@ -1,6 +1,7 @@
 import math
 import threading
 import time
+from typing import Any, Tuple, Union, List
 
 try:
     import ctypes
@@ -47,11 +48,14 @@ FLASHW_TIMERNOFG = 12
 
 
 class FLASHWINFO(ctypes.Structure):
-    _fields_ = [("cbSize", ctypes.c_uint),
-                ("hwnd", ctypes.c_void_p),
-                ("dwFlags", ctypes.c_uint),
-                ("uCount", ctypes.c_uint),
-                ("dwTimeout", ctypes.c_uint)]
+    _fields_ = [
+        ("cbSize", ctypes.c_uint),
+        ("hwnd", ctypes.c_void_p),
+        ("dwFlags", ctypes.c_uint),
+        ("uCount", ctypes.c_uint),
+        ("dwTimeout", ctypes.c_uint),
+    ]
+
 
 class PWINDOWPOS(ctypes.Structure):
     _fields_ = [
@@ -64,19 +68,23 @@ class PWINDOWPOS(ctypes.Structure):
         ("flags", UINT),
     ]
 
+
 class NCCALCSIZE_PARAMS(ctypes.Structure):
     _fields_ = [("rgrc", RECT * 3), ("lppos", ctypes.POINTER(PWINDOWPOS))]
 
-rnbtbs = []
-rnbbcs = []
-accent_color_titlebars = []
-accent_color_borders = []
-titles = {}
+
+rnbtbs: List[int] = []
+rnbbcs: List[int] = []
+accent_color_titlebars: List[int] = []
+accent_color_borders: List[int] = []
+titles: dict = {}
+
 
 class title_bar:
     """Hide or unhide the title bar of a window."""
+
     @classmethod
-    def hide(cls, window) -> None:
+    def hide(cls, window: Any) -> None:
         """
         Hide the title bar of the specified window.
 
@@ -89,26 +97,42 @@ class title_bar:
                 lpncsp = NCCALCSIZE_PARAMS.from_address(lp)
                 lpncsp.rgrc[0].top -= 6
 
-            return call_window_proc(*map(ctypes.c_uint64, (globals()[old], hwnd, msg, wp, lp)))
+            return call_window_proc(
+                *map(ctypes.c_uint64, (globals()[old], hwnd, msg, wp, lp))
+            )
 
         old, new = "old_wndproc", "new_wndproc"
-        prototype = ctypes.WINFUNCTYPE(ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64)
+        prototype = ctypes.WINFUNCTYPE(
+            ctypes.c_uint64,
+            ctypes.c_uint64,
+            ctypes.c_uint64,
+            ctypes.c_uint64,
+            ctypes.c_uint64,
+        )
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
 
         if globals().get(old) is None:
             globals()[old] = get_window_long(hwnd, GWL_WNDPROC)
 
         globals()[new] = prototype(handle)
         set_window_long(hwnd, GWL_WNDPROC, globals()[new])
-        
+
         old_style = get_window_long(hwnd, GWL_STYLE)
-        new_style = old_style & ~ WS_CAPTION
+        new_style = old_style & ~WS_CAPTION
         set_window_long(hwnd, GWL_STYLE, new_style)
-        set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
+        set_window_pos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+        )
 
     @classmethod
-    def unhide(cls, window) -> None:
+    def unhide(cls, window: Any) -> None:
         """
         Unhide the title bar of the specified window.
 
@@ -116,7 +140,7 @@ class title_bar:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
 
         if globals().get("old_wndproc") is not None:
             set_window_long(hwnd, GWL_WNDPROC, globals()["old_wndproc"])
@@ -125,13 +149,22 @@ class title_bar:
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_CAPTION
         set_window_long(hwnd, GWL_STYLE, new_style)
-        set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
+        set_window_pos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+        )
 
-class maximize_minimize_button():
+
+class maximize_minimize_button:
     """Hide or unhide both the maximize and minimize buttons of a window."""
 
     @classmethod
-    def hide(cls, window) -> None:
+    def hide(cls, window: Any) -> None:
         """
         Hide both the maximize and minimize buttons of the specified window.
 
@@ -139,14 +172,22 @@ class maximize_minimize_button():
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
-        new_style = old_style & ~ WS_MAXIMIZEBOX & ~ WS_MINIMIZEBOX
+        new_style = old_style & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX
         set_window_long(hwnd, GWL_STYLE, new_style)
-        set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
-    
+        set_window_pos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+        )
+
     @classmethod
-    def unhide(cls, window) -> None:
+    def unhide(cls, window: Any) -> None:
         """
         Unhide both the maximize and minimize buttons of the specified window.
 
@@ -154,17 +195,26 @@ class maximize_minimize_button():
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_MAXIMIZEBOX | WS_MINIMIZEBOX
         set_window_long(hwnd, GWL_STYLE, new_style)
-        set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
+        set_window_pos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+        )
+
 
 class maximize_button:
     """Enable or Disable only the maximize button of a window."""
 
     @classmethod
-    def disable(cls, window) -> None:
+    def disable(cls, window: Any) -> None:
         """
         Disable the maximize button of the specified window.
 
@@ -172,14 +222,22 @@ class maximize_button:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style & ~WS_MAXIMIZEBOX
         set_window_long(hwnd, GWL_STYLE, new_style)
-        set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
-    
+        set_window_pos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+        )
+
     @classmethod
-    def enable(cls, window) -> None:
+    def enable(cls, window: Any) -> None:
         """
         Enable the maximize button of the specified window.
 
@@ -187,17 +245,26 @@ class maximize_button:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_MAXIMIZEBOX
         set_window_long(hwnd, GWL_STYLE, new_style)
-        set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
+        set_window_pos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+        )
+
 
 class minimize_button:
     """Enable or Disable only the minimize button of a window."""
 
     @classmethod
-    def disable(cls, window) -> None:
+    def disable(cls, window: Any) -> None:
         """
         Disable the minimize button of the specified window.
 
@@ -205,14 +272,22 @@ class minimize_button:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style & ~WS_MINIMIZEBOX
         set_window_long(hwnd, GWL_STYLE, new_style)
-        set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
-    
+        set_window_pos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+        )
+
     @classmethod
-    def enable(cls, window) -> None:
+    def enable(cls, window: Any) -> None:
         """
         Enable the minimize button of the specified window.
 
@@ -220,17 +295,26 @@ class minimize_button:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_MINIMIZEBOX
         set_window_long(hwnd, GWL_STYLE, new_style)
-        set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
+        set_window_pos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+        )
 
-class all_stuffs():
+
+class all_stuffs:
     """Hide or unhide all the buttons, icon and title of a window."""
 
     @classmethod
-    def hide(cls, window) -> None:
+    def hide(cls, window: Any) -> None:
         """
         Hide all the buttons, icon and title of the specified window.
 
@@ -238,15 +322,22 @@ class all_stuffs():
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
-        new_style = old_style & ~ WS_SYSMENU
+        new_style = old_style & ~WS_SYSMENU
         set_window_long(hwnd, GWL_STYLE, new_style)
-        set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
+        set_window_pos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+        )
 
-    
     @classmethod
-    def unhide(cls, window) -> None:
+    def unhide(cls, window: Any) -> None:
         """
         Unhide all the buttons, icon and title of the specified window.
 
@@ -254,17 +345,26 @@ class all_stuffs():
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_SYSMENU
         set_window_long(hwnd, GWL_STYLE, new_style)
-        set_window_pos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED)
+        set_window_pos(
+            hwnd,
+            0,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+        )
+
 
 class window_flash:
     """Adds a flashing simulation to a window, which is useful for alerting the user or grabbing their attention."""
 
     @classmethod
-    def flash(cls, window, count:int = 5, interval:int = 1000) -> None:
+    def flash(cls, window: Any, count: int = 5, interval: int = 1000) -> None:
         """
         Flash the specified window.
 
@@ -277,18 +377,18 @@ class window_flash:
             >>> window_flash.flash(window, count=10, interval=500)
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         info = FLASHWINFO(
             cbSize=ctypes.sizeof(FLASHWINFO),
             hwnd=hwnd,
             dwFlags=FLASHW_ALL | FLASHW_TIMER,
             uCount=count,
-            dwTimeout=interval
+            dwTimeout=interval,
         )
         flash_window_ex(ctypes.pointer(info))
 
     @classmethod
-    def stop(cls, window) -> None:
+    def stop(cls, window: Any) -> None:
         """
         Stop the flashing simulation of the specified window immediately.
 
@@ -301,21 +401,22 @@ class window_flash:
             >>> window_flash.stop(window)
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         info = FLASHWINFO(
             cbSize=ctypes.sizeof(FLASHWINFO),
             hwnd=hwnd,
             dwFlags=FLASHW_STOP,
             uCount=0,
-            dwTimeout=0
+            dwTimeout=0,
         )
         flash_window_ex(ctypes.pointer(info))
 
-class opacity():
+
+class opacity:
     """Change the opacity of the specified window."""
 
     @classmethod
-    def set(cls, window, opacity: float) -> None:
+    def set(cls, window: Any, opacity: float) -> None:
         """
         Set the opacity of the specified window.
 
@@ -328,7 +429,7 @@ class opacity():
             >>> opacity.set(window, 1) # sets the window opacity to 100% (oppaque)
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
@@ -340,13 +441,15 @@ class opacity():
 
         ctypes.windll.user32.SetLayeredWindowAttributes(hwnd, 0, opacity, LWA_ALPHA)
 
+
 class title_bar_color:
     """Change the color of the title bar of a window."""
+
     @classmethod
-    def set(cls, window, color: tuple[int, int, int]|str) -> None:
+    def set(cls, window: Any, color: Union[Tuple[int, int, int], str]) -> None:
         """
         Set the color of the title bar of the specified window.
-        
+
         Args:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
             color (tuple/string): The RGB or HEX color value to set. It can be a tuple of integers (e.g., (255, 0, 0)) or a HEX string (e.g., "#FF0000").
@@ -356,20 +459,24 @@ class title_bar_color:
         """
 
         color = convert_color(color)
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in accent_color_titlebars:
             accent_color_titlebars.remove(hwnd)
         if hwnd in rnbtbs:
-            raise RuntimeError('Failed to change the title bar color. Please stop the rainbow titlebar effect using the `stop()` function.')
+            raise RuntimeError(
+                "Failed to change the title bar color. Please stop the rainbow titlebar effect using the `stop()` function."
+            )
 
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
-        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(color)), 4)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd, 35, ctypes.byref(ctypes.c_int(color)), 4
+        )
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
     @classmethod
-    def set_accent(cls, window) -> None:
+    def set_accent(cls, window: Any) -> None:
         """
         Set the color of the title bar of the specified window to the system accent color.
 
@@ -377,7 +484,7 @@ class title_bar_color:
             window (object): The window objec   t to modify (e.g., a Tk instance in Tkinter).
         """
 
-        def set_titlebar_color_accent(hwnd):
+        def set_titlebar_color_accent(hwnd: int) -> None:
             old_accent = (-1, -1, -1)
 
             while hwnd in accent_color_titlebars:
@@ -386,26 +493,36 @@ class title_bar_color:
                     old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
                     new_ex_style = old_ex_style | WS_EX_LAYERED
                     set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
-                    ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(color)), 4)
-                    set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
-                    
+                    ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                        hwnd, 35, ctypes.byref(ctypes.c_int(color)), 4
+                    )
+                    set_window_long(
+                        hwnd, GWL_EXSTYLE, old_ex_style
+                    )  # Reset the window style
+
                     old_accent = get_accent_color()
 
                 time.sleep(1)
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in rnbtbs:
-            raise RuntimeError('Failed to change the title bar color. Please stop the rainbow titlebar effect using the `stop()` function.')
-        
-        if not hwnd in accent_color_titlebars:
+            raise RuntimeError(
+                "Failed to change the title bar color. Please stop the rainbow titlebar effect using the `stop()` function."
+            )
+
+        if hwnd not in accent_color_titlebars:
             accent_color_titlebars.append(hwnd)
-            thread = threading.Thread(target = set_titlebar_color_accent, args = (hwnd,), daemon = True)
+            thread = threading.Thread(
+                target=set_titlebar_color_accent, args=(hwnd,), daemon=True
+            )
             thread.start()
         else:
-            raise RuntimeError("The titlebar's color of the specified window is already set to the accent color.")
+            raise RuntimeError(
+                "The titlebar's color of the specified window is already set to the accent color."
+            )
 
     @classmethod
-    def reset(cls, window) -> None:
+    def reset(cls, window: Any) -> None:
         """
         Reset the color of the title bar of the specified window to the default theme.
 
@@ -413,23 +530,28 @@ class title_bar_color:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in accent_color_titlebars:
             accent_color_titlebars.remove(hwnd)
         if hwnd in rnbtbs:
-            raise RuntimeError('Failed to reset the title bar color. Please stop the rainbow titlebar effect using the `stop()` function.')
+            raise RuntimeError(
+                "Failed to reset the title bar color. Please stop the rainbow titlebar effect using the `stop()` function."
+            )
 
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
-        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(-1)), 4)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd, 35, ctypes.byref(ctypes.c_int(-1)), 4
+        )
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)
+
 
 class title_bar_text_color:
     """Change the color of the title bar text of a window."""
 
     @classmethod
-    def set(cls, window, color: tuple[int, int, int]|str) -> None:
+    def set(cls, window, color: Union[Tuple[int, int, int], str]) -> None:
         """
         Set the color of the title bar text of the specified window.
 
@@ -442,15 +564,17 @@ class title_bar_text_color:
         """
 
         color = convert_color(color)
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
-        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 36, ctypes.byref(ctypes.c_int(color)), 4)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd, 36, ctypes.byref(ctypes.c_int(color)), 4
+        )
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
     @classmethod
-    def reset(cls, window) -> None:
+    def reset(cls, window: Any) -> None:
         """
         Reset the color of the title bar text of the specified window to the default color.
 
@@ -458,18 +582,21 @@ class title_bar_text_color:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
-        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 36, ctypes.byref(ctypes.c_int(-1)), 4)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd, 36, ctypes.byref(ctypes.c_int(-1)), 4
+        )
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)
+
 
 class border_color:
     """Change the color of the border of a window."""
 
     @classmethod
-    def set(cls, window, color: tuple[int, int, int]|str) -> None:
+    def set(cls, window: Any, color: Union[Tuple[int, int, int], str]) -> None:
         """
         Set the color of the border of the specified window.
 
@@ -482,20 +609,24 @@ class border_color:
         """
 
         color = convert_color(color)
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in accent_color_borders:
             accent_color_borders.remove(hwnd)
         if hwnd in rnbbcs:
-            raise RuntimeError('Failed to change the border color. Please stop the rainbow border effect using the `stop()` function.')
+            raise RuntimeError(
+                "Failed to change the border color. Please stop the rainbow border effect using the `stop()` function."
+            )
 
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
-        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4
+        )
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
     @classmethod
-    def set_accent(cls, window) -> None:
+    def set_accent(cls, window: Any) -> None:
         """
         Set the color of the border of the specified window to the system accent color.
 
@@ -512,51 +643,67 @@ class border_color:
                     old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
                     new_ex_style = old_ex_style | WS_EX_LAYERED
                     set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
-                    ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4)
-                    set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
+                    ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                        hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4
+                    )
+                    set_window_long(
+                        hwnd, GWL_EXSTYLE, old_ex_style
+                    )  # Reset the window style
 
                     old_accent = get_accent_color()
 
                 time.sleep(1)
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in rnbbcs:
-            raise RuntimeError('Failed to change the border color. Please stop the rainbow border effect using the `stop()` function.')
-        
-        if not hwnd in accent_color_borders:
+            raise RuntimeError(
+                "Failed to change the border color. Please stop the rainbow border effect using the `stop()` function."
+            )
+
+        if hwnd not in accent_color_borders:
             accent_color_borders.append(hwnd)
-            thread = threading.Thread(target = set_border_color_accent, args = (hwnd,), daemon = True)
+            thread = threading.Thread(
+                target=set_border_color_accent, args=(hwnd,), daemon=True
+            )
             thread.start()
         else:
-            raise RuntimeError("The border's color of the specified window is already set to the accent color.")
+            raise RuntimeError(
+                "The border's color of the specified window is already set to the accent color."
+            )
 
     @classmethod
-    def reset(cls, window) -> None:
+    def reset(cls, window: Any) -> None:
         """
         Reset the color of the border of the specified window to the default color.
-        
+
         Args:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in accent_color_borders:
             accent_color_borders.remove(hwnd)
         if hwnd in rnbbcs:
-            raise RuntimeError('Failed to reset the border color. Please stop the rainbow border effect using the `stop()` function.')
+            raise RuntimeError(
+                "Failed to reset the border color. Please stop the rainbow border effect using the `stop()` function."
+            )
 
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
-        ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(-1)), 4)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd, 34, ctypes.byref(ctypes.c_int(-1)), 4
+        )
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)
+
 
 class rainbow_title_bar:
     """Add a rainbow effect to the title bar of a window."""
+
     current_color = None
 
     @classmethod
-    def start(cls, window, interval: int = 5, color_stops:int = 5) -> None:
+    def start(cls, window: Any, interval: int = 5, color_stops: int = 5) -> None:
         """
         Start the rainbow effect on the title bar of the specified window.
 
@@ -574,12 +721,14 @@ class rainbow_title_bar:
             Higher values for `color_stops` might skip most of the colors defying the purpose of the rainbow effect.
         """
 
-        def color_changer(hwnd, interval):
+        def color_changer(hwnd: int, interval: int):
             r, g, b = 200, 0, 0
             while hwnd in rnbtbs:
                 cls.current_color = (r << 16) | (g << 8) | b
 
-                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(cls.current_color)), 4)
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                    hwnd, 35, ctypes.byref(ctypes.c_int(cls.current_color)), 4
+                )
                 if r < 255 and g == 0 and b == 0:
                     r = min(255, r + color_stops)
                 elif r == 255 and g < 255 and b == 0:
@@ -596,9 +745,11 @@ class rainbow_title_bar:
                     b = max(0, b - color_stops)
                 ctypes.windll.kernel32.Sleep(interval)
             else:
-                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 35, ctypes.byref(ctypes.c_int(-1)), 4)
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                    hwnd, 35, ctypes.byref(ctypes.c_int(-1)), 4
+                )
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in accent_color_titlebars:
             accent_color_titlebars.remove(hwnd)
 
@@ -606,13 +757,15 @@ class rainbow_title_bar:
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
 
-        if not hwnd in rnbtbs:
+        if hwnd not in rnbtbs:
             rnbtbs.append(hwnd)
             thread = threading.Thread(target=color_changer, args=(hwnd, interval))
             thread.daemon = True
             thread.start()
         else:
-            raise RuntimeError('The rainbow title bar effect is already applied to this window.')
+            raise RuntimeError(
+                "The rainbow title bar effect is already applied to this window."
+            )
 
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
@@ -636,7 +789,7 @@ class rainbow_title_bar:
         return (r, g, b)
 
     @classmethod
-    def stop(cls, window) -> None:
+    def stop(cls, window: Any) -> None:
         """
         Stop the rainbow effect on the title bar of the specified window.
 
@@ -644,18 +797,20 @@ class rainbow_title_bar:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in rnbtbs:
             rnbtbs.remove(hwnd)
         else:
-            raise ValueError('Rainbow title bar is not running on this window.')
+            raise ValueError("Rainbow title bar is not running on this window.")
+
 
 class rainbow_border:
     """Add a rainbow effect to the border of a window."""
+
     current_color = None
 
     @classmethod
-    def start(cls, window, interval=5, color_stops=5) -> None:
+    def start(cls, window: Any, interval: int = 5, color_stops: int = 5) -> None:
         """
         Start the rainbow effect on the border of the specified window.
 
@@ -673,12 +828,14 @@ class rainbow_border:
             Higher values for `color_stops` might skip most of the colors defying the purpose of the rainbow effect.
         """
 
-        def color_changer(hwnd, interval):
+        def color_changer(hwnd, interval: int):
             r, g, b = 200, 0, 0
             while hwnd in rnbbcs:
                 cls.current_color = (r << 16) | (g << 8) | b
 
-                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(cls.current_color)), 4)
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                    hwnd, 34, ctypes.byref(ctypes.c_int(cls.current_color)), 4
+                )
                 if r < 255 and g == 0 and b == 0:
                     r = min(255, r + color_stops)
                 elif r == 255 and g < 255 and b == 0:
@@ -695,9 +852,11 @@ class rainbow_border:
                     b = max(0, b - color_stops)
                 ctypes.windll.kernel32.Sleep(interval)
             else:
-                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 34, ctypes.byref(ctypes.c_int(-1)), 4)
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                    hwnd, 34, ctypes.byref(ctypes.c_int(-1)), 4
+                )
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in accent_color_borders:
             accent_color_borders.remove(hwnd)
 
@@ -705,13 +864,15 @@ class rainbow_border:
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
 
-        if not hwnd in rnbbcs:
+        if hwnd not in rnbbcs:
             rnbbcs.append(hwnd)
             thread = threading.Thread(target=color_changer, args=(hwnd, interval))
             thread.daemon = True
             thread.start()
         else:
-            raise RuntimeError('The rainbow border effect is already applied to this window.')
+            raise RuntimeError(
+                "The rainbow border effect is already applied to this window."
+            )
 
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
@@ -735,7 +896,7 @@ class rainbow_border:
         return (r, g, b)
 
     @classmethod
-    def stop(cls, window) -> None:
+    def stop(cls, window: Any) -> None:
         """
         Stop the rainbow effect on the border of the specified window.
 
@@ -747,13 +908,14 @@ class rainbow_border:
         if hwnd in rnbbcs:
             rnbbcs.remove(hwnd)
         else:
-            raise ValueError('Rainbow border is not running on this window.')
+            raise ValueError("Rainbow border is not running on this window.")
+
 
 class window_frame:
     """Change the position, size, and state of a window."""
 
     @classmethod
-    def center(cls, window) -> None:
+    def center(cls, window: Any) -> None:
         """
         Center the specified window on the screen.
 
@@ -761,7 +923,7 @@ class window_frame:
             window (object): The window object to center (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
 
         # Get the window's current position and size
         rect = ctypes.wintypes.RECT()
@@ -781,7 +943,7 @@ class window_frame:
         ctypes.windll.user32.SetWindowPos(hwnd, 0, new_x, new_y, 0, 0, 0x0001)
 
     @classmethod
-    def center_relative(cls, window_parent, window_child) -> None:
+    def center_relative(cls, window_parent: Any, window_child: Any) -> None:
         """
         Center the specified child window relative to the parent window.
 
@@ -793,8 +955,8 @@ class window_frame:
             >>> window_frame.center_relative(parent_window, child_window)
         """
 
-        hwnd_parent = module_find(window_parent)
-        hwnd_child = module_find(window_child)
+        hwnd_parent: int = module_find(window_parent)
+        hwnd_child: int = module_find(window_child)
 
         # Get the parent window's current position and size
         rect_parent = ctypes.wintypes.RECT()
@@ -816,7 +978,7 @@ class window_frame:
         ctypes.windll.user32.SetWindowPos(hwnd_child, 0, new_x, new_y, 0, 0, 0x0001)
 
     @classmethod
-    def move(cls, window, x:int, y:int) -> None:
+    def move(cls, window: Any, x: int, y: int) -> None:
         """
         Move the specified window to the specified position.
 
@@ -829,11 +991,11 @@ class window_frame:
             >>> window_frame.move(window, 100, 100) # moves the window to (100, 100)
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         set_window_pos(hwnd, 0, x, y, 0, 0, 0x0001)
 
     @classmethod
-    def resize(cls, window, width:int, height:int) -> None:
+    def resize(cls, window: Any, width: int, height: int) -> None:
         """
         Resize the specified window to the specified width and height.
 
@@ -846,11 +1008,11 @@ class window_frame:
             >>> window_frame.resize(window, 800, 600) # resizes the window to 800x600
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         set_window_pos(hwnd, 0, 0, 0, width, height, 0x0001)
 
     @classmethod
-    def minimize(cls, window) -> None:
+    def minimize(cls, window: Any) -> None:
         """
         Minimize the specified window.
 
@@ -862,7 +1024,7 @@ class window_frame:
         ctypes.windll.user32.ShowWindow(hwnd, 6)
 
     @classmethod
-    def maximize(cls, window) -> None:
+    def maximize(cls, window: Any) -> None:
         """
         Maximize the specified window.
 
@@ -870,23 +1032,26 @@ class window_frame:
             window (object): The window object to maximize (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         ctypes.windll.user32.ShowWindow(hwnd, 3)
 
     @classmethod
-    def restore(cls, window) -> None:
+    def restore(cls, window: Any) -> None:
         """
         Restore a minimized or maximized window to its original size and position.
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         ctypes.windll.user32.ShowWindow(hwnd, 9)
+
 
 class window_animation:
     """Add linear animations to a window."""
 
     @classmethod
-    def circle_motion(cls, window, count:int = 5, interval:int = 5, radius:int = 20) -> None:
+    def circle_motion(
+        cls, window: Any, count: int = 5, interval: int = 5, radius: int = 20
+    ) -> None:
         """
         Move the specified window in a circular motion.
 
@@ -903,14 +1068,14 @@ class window_animation:
             The `interval` parameter controls the speed of the circular motion. Lower values will result in a faster circular motion.
         """
 
-        def motion():
-            hwnd = module_find(window)
+        def motion() -> None:
+            hwnd: int = module_find(window)
             rect = ctypes.wintypes.RECT()
             ctypes.windll.user32.GetWindowRect(hwnd, ctypes.byref(rect))
             original_x = rect.left
             original_y = rect.top
             for angle in range(0, 360 * count, 5):  # move in a circle count times
-                rad = math.radians(angle)
+                rad: float = math.radians(angle)
                 x = original_x + int(radius * math.cos(rad))
                 y = original_y + int(radius * math.sin(rad))
                 ctypes.windll.user32.SetWindowPos(hwnd, 0, x, y, 0, 0, 0x0001)
@@ -921,7 +1086,9 @@ class window_animation:
         thread.start()
 
     @classmethod
-    def vertical_shake(cls, window, count:int = 5, interval:int = 3, amplitude:int = 20) -> None:
+    def vertical_shake(
+        cls, window: Any, count: int = 5, interval: int = 3, amplitude: int = 20
+    ) -> None:
         """
         Shake the specified window vertically.
 
@@ -938,13 +1105,13 @@ class window_animation:
             The `interval` parameter controls the speed of the shake. Lower values will result in a faster
         """
 
-        def motion():
-            hwnd = module_find(window)
+        def motion() -> None:
+            hwnd: int = module_find(window)
             rect = ctypes.wintypes.RECT()
             ctypes.windll.user32.GetWindowRect(hwnd, ctypes.byref(rect))
             original_y = rect.top
             for offset in range(0, 360 * count, count):  # move up and down 5 times
-                rad = math.radians(offset)
+                rad: float = math.radians(offset)
                 y = original_y + int(amplitude * math.sin(rad))
                 ctypes.windll.user32.SetWindowPos(hwnd, 0, rect.left, y, 0, 0, 0x0001)
                 ctypes.windll.kernel32.Sleep(interval)
@@ -954,7 +1121,9 @@ class window_animation:
         thread.start()
 
     @classmethod
-    def horizontal_shake(cls, window, count:int = 5, interval:int = 3, amplitude:int = 20) -> None:
+    def horizontal_shake(
+        cls, window: Any, count: int = 5, interval: int = 3, amplitude: int = 20
+    ) -> None:
         """
         Shake the specified window horizontally.
 
@@ -966,18 +1135,18 @@ class window_animation:
 
         Example:
             >>> window_animation.horizontal_shake(window, count=10, interval=5, amplitude=30)
-            
+
         Notes:
             The `interval` parameter controls the speed of the shake. Lower values will result in a faster shake.
         """
 
-        def motion():
-            hwnd = module_find(window)
+        def motion() -> None:
+            hwnd: int = module_find(window)
             rect = ctypes.wintypes.RECT()
             ctypes.windll.user32.GetWindowRect(hwnd, ctypes.byref(rect))
             original_x = rect.left
             for offset in range(0, 360 * count, count):  # move left and right 5 times
-                rad = math.radians(offset)
+                rad: float = math.radians(offset)
                 x = original_x + int(amplitude * math.sin(rad))
                 ctypes.windll.user32.SetWindowPos(hwnd, 0, x, rect.top, 0, 0, 0x0001)
                 ctypes.windll.kernel32.Sleep(interval)
@@ -986,10 +1155,12 @@ class window_animation:
         thread.daemon = True
         thread.start()
 
+
 class title_text:
     """Play with the title of a window."""
+
     @classmethod
-    def set(cls, window, title:str) -> None:
+    def set(cls, window: Any, title: str) -> None:
         """
         Changes the title of the specified window.
 
@@ -998,11 +1169,11 @@ class title_text:
             title (str): The new title to set.
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         ctypes.windll.user32.SetWindowTextW(hwnd, title)
 
     @classmethod
-    def stylize(cls, window, style:int = 1) -> None:
+    def stylize(cls, window: Any, style: int = 1) -> None:
         """
         Stylize the title of the specified window.
 
@@ -1011,7 +1182,7 @@ class title_text:
             style (int): The style to apply to the title. There are 10 styles available (1-10). Default is 1.
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd not in titles:
             title = ctypes.create_unicode_buffer(1024)
             ctypes.windll.user32.GetWindowTextW(hwnd, title, 1024)
@@ -1020,7 +1191,7 @@ class title_text:
         ctypes.windll.user32.SetWindowTextW(hwnd, title)
 
     @classmethod
-    def reset(cls, window) -> None:
+    def reset(cls, window: Any) -> None:
         """
         Remove the stylized title of the specified window and reset it to the original title.
 
@@ -1028,10 +1199,11 @@ class title_text:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in titles:
             ctypes.windll.user32.SetWindowTextW(hwnd, titles[hwnd])
             del titles[hwnd]
+
 
 def stylize_text(text: str, style: int) -> str:
     """
@@ -1062,19 +1234,20 @@ def stylize_text(text: str, style: int) -> str:
         "ᗩᗷᑕᗪEᖴGᕼIᒍKᒪᗰᑎOᑭᑫᖇᔕTᑌᐯᗯ᙭YᘔᗩᗷᑕᗪEᖴGᕼIᒍKᒪᗰᑎOᑭᑫᖇᔕTᑌᐯᗯ᙭Yᘔ1234567890",
         "𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ𝟙𝟚𝟛𝟜𝟝𝟞𝟟𝟠𝟡𝟘",
         "₳฿₵ĐɆ₣₲ⱧłJ₭Ⱡ₥₦Ø₱QⱤ₴₮ɄV₩ӾɎⱫ₳฿₵ĐɆ₣₲ⱧłJ₭Ⱡ₥₦Ø₱QⱤ₴₮ɄV₩ӾɎⱫ1234567890",
-        "卂乃匚ᗪ乇千Ꮆ卄丨ﾌҜㄥ爪几ㄖ卩Ɋ尺丂ㄒㄩᐯ山乂ㄚ乙卂乃匚ᗪ乇千Ꮆ卄丨ﾌҜㄥ爪几ㄖ卩Ɋ尺丂ㄒㄩᐯ山乂ㄚ乙1234567890"
+        "卂乃匚ᗪ乇千Ꮆ卄丨ﾌҜㄥ爪几ㄖ卩Ɋ尺丂ㄒㄩᐯ山乂ㄚ乙卂乃匚ᗪ乇千Ꮆ卄丨ﾌҜㄥ爪几ㄖ卩Ɋ尺丂ㄒㄩᐯ山乂ㄚ乙1234567890",
     ]
 
     if style < 1 or style > len(styles):
         raise ValueError("Invalid style number")
 
-    translation_table = str.maketrans(normal, styles[style - 1])
+    translation_table: dict[int, int] = str.maketrans(normal, styles[style - 1])
     return text.translate(translation_table)
 
-def convert_color(color: tuple[int, int, int]|str) -> int:
+
+def convert_color(color: Union[Tuple[int, int, int], str]) -> int:
     """
     Helper function to convert the color value to an integer.
-    
+
     Args:
         color (tuple/string): The RGB or HEX color value to convert.
 
@@ -1085,11 +1258,12 @@ def convert_color(color: tuple[int, int, int]|str) -> int:
     if isinstance(color, tuple) and len(color) == 3:  # RGB format
         r, g, b = color
         return int(f"{b}{g}{r}", 16)
-    elif isinstance(color, str) and color.startswith('#'):  # HEX format
+    elif isinstance(color, str) and color.startswith("#"):  # HEX format
         r, g, b = color[1:3], color[3:5], color[5:7]
         return int(f"{b}{g}{r}", 16)
     else:
-        raise ValueError('Invalid color format. Expected RGB tuple or HEX string.')
+        raise ValueError("Invalid color format. Expected RGB tuple or HEX string.")
+
 
 def get_accent_color() -> str:
     """
@@ -1102,8 +1276,8 @@ def get_accent_color() -> str:
         >>> get_accent_color()
     """
 
-    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Microsoft\Windows\DWM')
-    value, type = winreg.QueryValueEx(key, 'ColorizationAfterglow')
+    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\DWM")
+    value, type = winreg.QueryValueEx(key, "ColorizationAfterglow")
     winreg.CloseKey(key)
 
     if len(hex(value)[4:]) == 6:
@@ -1111,7 +1285,8 @@ def get_accent_color() -> str:
     else:
         return "#" + hex(value)[2:]
 
-def module_find(window) -> int:
+
+def module_find(window: Any) -> int:
     """
     Helper function to find the window handle based on the module used.
 
@@ -1123,26 +1298,26 @@ def module_find(window) -> int:
     """
 
     try:
-        window.update() # for tk
+        window.update()  # for tk
         return ctypes.windll.user32.GetParent(window.winfo_id())
-    except:
+    except Exception:
         pass
     try:
-        return window.winId().__int__() # for pyQt and PySide
-    except:
+        return window.winId().__int__()  # for pyQt and PySide
+    except Exception:
         pass
     try:
-        return window.GetHandle() # for wx
-    except:
+        return window.GetHandle()  # for wx
+    except Exception:
         pass
     try:
-        gdk_window = window.get_window() # for PyGTK
+        gdk_window = window.get_window()  # for PyGTK
         return gdk_window.get_xid()
-    except:
+    except Exception:
         pass
     try:
-        return window.root_window.get_window_info().window # for kivy
-    except:
+        return window.root_window.get_window_info().window  # for kivy
+    except Exception:
         pass
 
-    return window    # others / notfound
+    return window  # others / notfound
