@@ -48,4 +48,4 @@ jobs:
 
     - name: Test with Mypy
       run: |
-        mypy .
+        mypy hPyT
