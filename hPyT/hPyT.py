@@ -458,7 +458,7 @@ class title_bar_color:
             >>> title_bar_color.set(window, (255, 0, 0))
         """
 
-        color = convert_color(color)
+        converted_color: int = convert_color(color)
         hwnd: int = module_find(window)
         if hwnd in accent_color_titlebars:
             accent_color_titlebars.remove(hwnd)
@@ -471,7 +471,7 @@ class title_bar_color:
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
         ctypes.windll.dwmapi.DwmSetWindowAttribute(
-            hwnd, 35, ctypes.byref(ctypes.c_int(color)), 4
+            hwnd, 35, ctypes.byref(ctypes.c_int(converted_color)), 4
         )
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
@@ -484,7 +484,7 @@ class title_bar_color:
             window (object): The window objec   t to modify (e.g., a Tk instance in Tkinter).
         """
 
-        def set_titlebar_color_accent(hwnd: int) -> None:
+        def set_titlebar_color_accent(hwnd):
             old_accent = (-1, -1, -1)
 
             while hwnd in accent_color_titlebars:
@@ -563,13 +563,13 @@ class title_bar_text_color:
             >>> title_bar_text_color.set(window, (255, 0, 0))
         """
 
-        color = convert_color(color)
+        converted_color: int = convert_color(color)
         hwnd: int = module_find(window)
         old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
         ctypes.windll.dwmapi.DwmSetWindowAttribute(
-            hwnd, 36, ctypes.byref(ctypes.c_int(color)), 4
+            hwnd, 36, ctypes.byref(ctypes.c_int(converted_color)), 4
         )
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
@@ -608,7 +608,7 @@ class border_color:
             >>> border_color.set(window, (255, 0, 0))
         """
 
-        color = convert_color(color)
+        converted_color: int = convert_color(color)
         hwnd: int = module_find(window)
         if hwnd in accent_color_borders:
             accent_color_borders.remove(hwnd)
@@ -621,7 +621,7 @@ class border_color:
         new_ex_style = old_ex_style | WS_EX_LAYERED
         set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
         ctypes.windll.dwmapi.DwmSetWindowAttribute(
-            hwnd, 34, ctypes.byref(ctypes.c_int(color)), 4
+            hwnd, 34, ctypes.byref(ctypes.c_int(converted_color)), 4
         )
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
@@ -783,6 +783,8 @@ class rainbow_title_bar:
         """
 
         color = cls.current_color
+        if color is None:
+            return (0, 0, 0)  # Default color if current_color is None
         b = (color >> 16) & 0xFF
         g = (color >> 8) & 0xFF
         r = color & 0xFF
@@ -890,6 +892,8 @@ class rainbow_border:
         """
 
         color = cls.current_color
+        if color is None:
+            return (0, 0, 0)  # Default color if current_color is None
         b = (color >> 16) & 0xFF
         g = (color >> 8) & 0xFF
         r = color & 0xFF
@@ -1187,7 +1191,7 @@ class title_text:
             title = ctypes.create_unicode_buffer(1024)
             ctypes.windll.user32.GetWindowTextW(hwnd, title, 1024)
             titles[hwnd] = title.value
-        title = stylize_text(titles[hwnd], style)
+        title = ctypes.create_unicode_buffer(stylize_text(titles[hwnd], style))
         ctypes.windll.user32.SetWindowTextW(hwnd, title)
 
     @classmethod
@@ -1259,8 +1263,8 @@ def convert_color(color: Union[Tuple[int, int, int], str]) -> int:
         r, g, b = color
         return int(f"{b}{g}{r}", 16)
     elif isinstance(color, str) and color.startswith("#"):  # HEX format
-        r, g, b = color[1:3], color[3:5], color[5:7]
-        return int(f"{b}{g}{r}", 16)
+        r, g, b = int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)
+        return (r << 16) | (g << 8) | b
     else:
         raise ValueError("Invalid color format. Expected RGB tuple or HEX string.")
 
