@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.rst'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.rst'
+  workflow_dispatch:
+
+jobs:
+  codestyle:
+    name: Check code style issues
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Upgrade pip
+      run: python -m pip install --upgrade pip
+
+    - name: Install hPyT
+      run: |
+        python -m pip install .
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install ruff
+        python -m pip install mypy
+
+    - name: Test and Lint with Ruff
+      run: |
+        ruff check .
+        ruff format --check .
+
+    - name: Test with Mypy
+      run: |
+        mypy .
