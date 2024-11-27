@@ -16,7 +16,7 @@ on:
 jobs:
   codestyle:
     name: Check code style issues
-    runs-on: ubuntu-20.04
+    runs-on: windows-latest
 
     steps:
     - name: Checkout Code
