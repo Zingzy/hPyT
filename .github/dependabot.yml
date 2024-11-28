@@ -1,7 +1,7 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions" # See documentation for possible values
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
-    
+    taget-branch: "main"
