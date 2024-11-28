@@ -46,6 +46,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [Stylize text](#stylize-text)
 	- [Workaround for other libraries](#workaround-for-other-libraries)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
+		- [v1.3.5](#v135)
 		- [v1.3.4](#v134)
 		- [v1.3.3](#v133)
 		- [v1.3.2](#v132)
@@ -73,7 +74,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.3.4
+pip install hPyT==1.3.5
 ```
 
 ## 📥 Importing
@@ -213,6 +214,8 @@ title_bar_color.set_accent(window) # sets the titlebar color to the current wind
 
 ![Accent TitleBar](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/accent_titlebar.png)
 
+> [!NOTE]
+> *The titlebar color will automatically change when the windows accent color changes*
 
 ## 🖌️ Custom TitleBar Text Color
 
@@ -240,6 +243,8 @@ border_color.set_accent(window) # sets the border color to the current windows a
 
 ![Accent Border](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/accent_border.png)
 
+> [!NOTE]
+> *The border color will automatically change when the windows accent color changes*
 
 ## 💻 Window Management
 
@@ -362,6 +367,11 @@ rainbow_border.start(hwnd)
 
 ## 📜 hPyT Changelog
 
+### v1.3.5
+
+- Add feature for automatically changing the accent color of the titlebar and border
+- Fix an issue which caused ImportError when used with a python version less than 3.9
+
 ### v1.3.4
 
 - Add method for applying the current windows accent color to the titlebar and border color
@@ -425,8 +435,10 @@ rainbow_border.start(hwnd)
 <br>
 
 ![PyPI](https://img.shields.io/pypi/v/hPyT?style=flat-square)
+![Python](https://img.shields.io/badge/python-3.6+-blue)
 ![Downloads](https://img.shields.io/pypi/dm/hPyT?style=flat-square)
-![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square)
+![Stars](https://img.shields.io/github/stars/zingzy/hPyT?style=flat-square)
+![Contributors](https://img.shields.io/github/contributors/zingzy/hPyT?style=flat-square)
 ![Last Commit](https://img.shields.io/github/last-commit/zingzy/hPyT?style=flat-square)
 
 ---
