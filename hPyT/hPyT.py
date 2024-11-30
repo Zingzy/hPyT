@@ -770,7 +770,7 @@ class rainbow_title_bar:
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
     @classmethod
-    def get_current_color(cls) -> tuple[int, int, int]:
+    def get_current_color(cls) -> Tuple[int, int, int]:
         """
         Get the current RGB color value of the title bar, which is being displayed by the rainbow effect.
         Can be useful if you want to synchronize the title bar's rainbow effect with other elements of the window.
@@ -879,7 +879,7 @@ class rainbow_border:
         set_window_long(hwnd, GWL_EXSTYLE, old_ex_style)  # Reset the window style
 
     @classmethod
-    def get_current_color(cls) -> tuple[int, int, int]:
+    def get_current_color(cls) -> Tuple[int, int, int]:
         """
         Get the current RGB color value of the border, which is being displayed by the rainbow effect.
         Can be useful if you want to synchronize the border's rainbow effect with other elements of the window.
