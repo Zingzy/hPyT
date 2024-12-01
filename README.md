@@ -46,6 +46,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [Stylize text](#stylize-text)
 	- [Workaround for other libraries](#workaround-for-other-libraries)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
+		- [v1.3.6](#v136)
 		- [v1.3.5](#v135)
 		- [v1.3.4](#v134)
 		- [v1.3.3](#v133)
@@ -74,7 +75,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.3.5
+pip install hPyT==1.3.6
 ```
 
 ## 📥 Importing
@@ -366,6 +367,10 @@ rainbow_border.start(hwnd)
 <br>
 
 ## 📜 hPyT Changelog
+
+### v1.3.6
+
+- Minor Bug Fixes
 
 ### v1.3.5
 
