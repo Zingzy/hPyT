@@ -1261,10 +1261,10 @@ def convert_color(color: Union[Tuple[int, int, int], str]) -> int:
 
     if isinstance(color, tuple) and len(color) == 3:  # RGB format
         r, g, b = color
-        return int(f"{b}{g}{r}", 16)
+        return (b << 16) | (g << 8) | r
     elif isinstance(color, str) and color.startswith("#"):  # HEX format
         r, g, b = int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)
-        return (r << 16) | (g << 8) | b
+        return (b << 16) | (g << 8) | r
     else:
         raise ValueError("Invalid color format. Expected RGB tuple or HEX string.")
 
