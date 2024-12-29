@@ -32,6 +32,11 @@ WS_EX_LAYERED = 524288
 WM_NCCALCSIZE = 0x0083
 WM_NCHITTEST = 0x0084
 
+WM_NCACTIVATE = 0x0086
+WM_NCPAINT = 0x0085
+
+TITLE_BAR_HEIGHT_REDUCTION = 7
+
 SWP_NOZORDER = 4
 SWP_NOMOVE = 2
 SWP_NOSIZE = 1
@@ -94,9 +99,19 @@ class title_bar:
 
         def handle(hwnd: int, msg: int, wp: int, lp: int) -> int:
             if msg == WM_NCCALCSIZE and wp:
+                # Adjust the non-client area (title bar) size
                 lpncsp = NCCALCSIZE_PARAMS.from_address(lp)
-                lpncsp.rgrc[0].top -= 6
+                lpncsp.rgrc[
+                    0
+                ].top -= (
+                    TITLE_BAR_HEIGHT_REDUCTION  # Reduce the height of the title bar
+                )
 
+            elif msg in [WM_NCACTIVATE, WM_NCPAINT]:
+                # Prevent Windows from drawing the title bar when the window is activated or painted
+                return 1  # Tell Windows not to process further
+
+            # Default processing for other messages
             return call_window_proc(
                 *map(ctypes.c_uint64, (globals()[old], hwnd, msg, wp, lp))
             )
