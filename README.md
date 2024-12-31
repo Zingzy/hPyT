@@ -17,7 +17,14 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [📚 Supported Libraries](#-supported-libraries)
 	- [📦 Installing](#-installing)
 	- [📥 Importing](#-importing)
-	- [Hide/Unhide Title Bar](#hideunhide-title-bar)
+	- [Hide/Unhide TitleBar](#hideunhide-titlebar)
+			- [**Understanding Window Geometry**](#understanding-window-geometry)
+			- [**Impact of Hiding the Title Bar**](#impact-of-hiding-the-title-bar)
+			- [**Potential Issues**](#potential-issues)
+			- [**Solution**](#solution)
+		- [Example Usage](#example-usage)
+			- [Comparision of the dimensions with and without `no_span=True`:](#comparision-of-the-dimensions-with-and-without-no_spantrue)
+			- [Visual Example:](#visual-example)
 	- [🌈 Rainbow TitleBar](#-rainbow-titlebar)
 	- [🌈 Rainbow Border](#-rainbow-border)
 		- [🔄 Synchronizing the Rainbow Effect with other elements](#-synchronizing-the-rainbow-effect-with-other-elements)
@@ -87,14 +94,151 @@ from customtkinter import * # you can use any other library from the above menti
 window = CTk() # creating a window using CustomTkinter
 ```
 
-## Hide/Unhide Title Bar
+## Hide/Unhide TitleBar
 
 ```python
-title_bar.hide(window) # hides full titlebar
+title_bar.hide(window, no_span = False) # hides full titlebar
+# optional parameter : no_span, more details in the note below
 # title_bar.unhide(window)
 ```
 
-![image](https://github.com/littlewhitecloud/hPyT/assets/71159641/03e533fe-c42a-4d84-b138-176a73ad7977)
+![Hide Titlebar preview](https://github.com/littlewhitecloud/hPyT/assets/71159641/03e533fe-c42a-4d84-b138-176a73ad7977)
+
+<details>
+<summary><h3>❗Important Note when hiding the titlebar</h3></summary>
+
+When hiding a title bar, the application window's total geometry and its content area geometry behave differently, which may introduce ambiguities. Here's a detailed explanation of the issue:
+
+#### **Understanding Window Geometry**
+
+1. **Full Window Dimensions**:
+   - Includes the content area, title bar, and borders.
+   - When the user specifies dimensions (e.g., `400x400`), it usually represents the **content area dimensions**. The total window height becomes `content height + title bar height + border width`.
+   - The color of the `top border` and `title bar` is usually the same, making it appear as a single entity.
+
+2. **Content Area Dimensions**:
+   - Represents only the usable area inside the window, excluding the title bar and borders.
+
+#### **Impact of Hiding the Title Bar**
+
+When the title bar is hidden:
+- The **content area height** expands to occupy the height previously used by the title bar. For example, a `400x400` content area might expand to `400x438` (assuming the visual title bar height is 38px).
+
+Better illustrated in the following example:
+
+```py
+...
+
+def show_window_dimensions():
+    hwnd: int = ctypes.windll.user32.GetForegroundWindow()
+
+    x_with_decorations: int = root.winfo_rootx()  # X position of the full window
+    y_with_decorations: int = root.winfo_rooty()  # Y position of the full window
+
+    x_without_decorations: int = root.winfo_x()  # X position of the content area
+    y_without_decorations: int = root.winfo_y()  # Y position of the content area
+
+    titlebar_height: int = y_with_decorations - y_without_decorations
+    border_width: int = x_with_decorations - x_without_decorations
+
+    window_rect: RECT = get_window_rect(hwnd)
+
+    width: int = window_rect.right - window_rect.left
+    height: int = window_rect.bottom - window_rect.top
+
+    print(f"Title bar height: {titlebar_height}")
+    print(f"Border width: {border_width}")
+    print(f"Main window dimensions: {width}x{height}")
+    print(
+        f"Content window dimensions: {root.winfo_geometry()}"
+    )  # This will return the dimensions of the content area only
+
+...
+
+def click(e=None):
+    root.update_idletasks()
+
+    print("------ Before hiding title bar ------")
+    show_window_dimensions()
+
+	title_bar.hide(root)
+	is_hidden = True
+
+    print("------ After hiding title bar ------")
+    show_window_dimensions()
+
+
+button = CTkButton(root, text="Click Me", command=click)
+button.place(relx=0.5, rely=0.5, anchor="center")
+
+root.mainloop()
+```
+
+Output:
+
+```cmd
+------ Before hiding title bar ------
+Title bar height: 38
+Border width: 9
+Main window dimensions: 468x497
+Content window dimensions: 450x450
+------ After hiding title bar ------
+Title bar height: 0
+Border width: 9
+Main window dimensions: 468x497
+Content window dimensions: 450x488
+```
+
+By the above example, you can see that the content area height has increased from `450px` to `488px` after hiding the title bar.
+
+#### **Potential Issues**
+This automatic resizing may cause layout problems or unintended behavior in some applications. For instance:
+- UI elements might **overlap** or **stretch**.
+- Custom layouts may require recalibration.
+
+#### **Solution**
+To address this, a `no_span` parameter is introduced in the `hide` method. This parameter allows users to control whether the content area height should be adjusted dynamically to maintain its original size.
+
+- **Default Behavior (`no_span=False`)**:
+  The content area height will expand to occupy the title bar's space.
+- **With `no_span=True`**:
+  The content area will be resized dynamically to maintain its original dimensions.
+
+### Example Usage
+
+```python
+title_bar.hide(root, no_span=True)
+```
+
+#### Comparision of the dimensions with and without `no_span=True`:
+
+```diff
+- Content window dimensions: 450x488
++ Content window dimensions: 450x450
+
+- Main window dimensions: 468x497
++ Main window dimensions: 468x459
+```
+#### Visual Example:
+
+<table align="center">
+  <thead>
+    <tr>
+      <th><code>no_span = False</code></th>
+      <th><code>no_span = True</code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><img src="https://raw.githubusercontent.com/Zingzy/hPyT/main/assets/span.gif" alt="Height of the Content area changes when the no_span paramer is set to False by default" width=300></td>
+      <td align="center"><img src="https://raw.githubusercontent.com/Zingzy/hPyT/main/assets/no_span.gif" alt="Height of the Content area does not change when the no_span paramer is set to False by default" width=300></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+</details>
 
 ## 🌈 Rainbow TitleBar
 
