@@ -553,7 +553,7 @@ class title_bar_color:
             old_accent: str = "#000000"
 
             while hwnd in accent_color_titlebars:
-                if not old_accent == get_accent_color():
+                if old_accent != get_accent_color():
                     color: int = convert_color(get_accent_color())
                     old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
                     new_ex_style = old_ex_style | WS_EX_LAYERED
@@ -786,7 +786,7 @@ class rainbow_title_bar:
             Higher values for `color_stops` might skip most of the colors defying the purpose of the rainbow effect.
         """
 
-        def color_changer(hwnd: int, interval: int):
+        def color_changer(hwnd: int, interval: int) -> None:
             r, g, b = 200, 0, 0
             while hwnd in rnbtbs:
                 cls.current_color = (r << 16) | (g << 8) | b
