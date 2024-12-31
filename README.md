@@ -102,7 +102,7 @@ title_bar.hide(window, no_span = False) # hides full titlebar
 # title_bar.unhide(window)
 ```
 
-![Hide Titlebar preview](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/titlebar.gif)
+![Hide Titlebar preview](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/titlebar.png)
 
 <details>
 <summary><h3>❗Important Note when hiding the titlebar</h3></summary>
