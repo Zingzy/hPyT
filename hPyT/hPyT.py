@@ -1,7 +1,7 @@
 import math
 import threading
 import time
-from typing import Any, Tuple, Union, List
+from typing import Any, Tuple, Union, List, Dict
 
 try:
     import ctypes
@@ -26,6 +26,7 @@ WS_MINIMIZEBOX = 0x00020000
 WS_MAXIMIZEBOX = 0x00010000
 WS_CAPTION = 0x00C00000
 WS_SYSMENU = 0x00080000
+WS_BORDER = 0x00800000
 
 WS_EX_LAYERED = 524288
 
@@ -34,8 +35,6 @@ WM_NCHITTEST = 0x0084
 
 WM_NCACTIVATE = 0x0086
 WM_NCPAINT = 0x0085
-
-TITLE_BAR_HEIGHT_REDUCTION = 7
 
 SWP_NOZORDER = 4
 SWP_NOMOVE = 2
@@ -88,27 +87,30 @@ titles: dict = {}
 class title_bar:
     """Hide or unhide the title bar of a window."""
 
+    _height_reduction: Dict[
+        int, int
+    ] = {}  # To track the height reduction applied for each window
+
     @classmethod
-    def hide(cls, window: Any) -> None:
+    def hide(cls, window: Any, no_span: bool = False) -> None:
         """
         Hide the title bar of the specified window.
 
         Args:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
+            no_span (bool): Whether to resize the window to fit the content area only. Default is False.
         """
 
         def handle(hwnd: int, msg: int, wp: int, lp: int) -> int:
             if msg == WM_NCCALCSIZE and wp:
                 # Adjust the non-client area (title bar) size
+                # Here we are basically removing the top border (because the title bar in windows is made of 2 components: the actual titlebar and the border, both having same color)
                 lpncsp = NCCALCSIZE_PARAMS.from_address(lp)
-                lpncsp.rgrc[
-                    0
-                ].top -= (
-                    TITLE_BAR_HEIGHT_REDUCTION  # Reduce the height of the title bar
-                )
+                lpncsp.rgrc[0].top -= border_width  # Reduce the height of the title bar
 
             elif msg in [WM_NCACTIVATE, WM_NCPAINT]:
                 # Prevent Windows from drawing the title bar when the window is activated or painted
+                # Here we are telling windows not to draw border when the window is switched
                 return 1  # Tell Windows not to process further
 
             # Default processing for other messages
@@ -127,6 +129,22 @@ class title_bar:
 
         hwnd: int = module_find(window)
 
+        # Get the window and client dimensions
+        rect = RECT()
+        client_rect = RECT()
+        ctypes.windll.user32.GetWindowRect(hwnd, ctypes.byref(rect))
+        ctypes.windll.user32.GetClientRect(hwnd, ctypes.byref(client_rect))
+
+        full_width: int = rect.right - rect.left
+        full_height: int = rect.bottom - rect.top
+        client_width: int = client_rect.right
+        client_height: int = client_rect.bottom
+
+        # Calculate the border width and title bar height
+        border_width: int = (full_width - client_width) // 2
+        title_bar_height: int = full_height - client_height - border_width
+
+        # Override the window procedure if not already done
         if globals().get(old) is None:
             globals()[old] = get_window_long(hwnd, GWL_WNDPROC)
 
@@ -134,8 +152,22 @@ class title_bar:
         set_window_long(hwnd, GWL_WNDPROC, globals()[new])
 
         old_style = get_window_long(hwnd, GWL_STYLE)
-        new_style = old_style & ~WS_CAPTION
+        new_style = (old_style & ~WS_CAPTION) | WS_BORDER
         set_window_long(hwnd, GWL_STYLE, new_style)
+
+        if no_span:
+            cls._height_reduction[hwnd] = title_bar_height
+            set_window_pos(
+                hwnd,
+                0,
+                0,
+                0,
+                full_width,
+                full_height - title_bar_height,
+                SWP_NOZORDER | SWP_NOMOVE,
+            )
+            return
+
         set_window_pos(
             hwnd,
             0,
@@ -161,9 +193,27 @@ class title_bar:
             set_window_long(hwnd, GWL_WNDPROC, globals()["old_wndproc"])
             globals()["old_wndproc"] = None
 
+        # Restore the original height if no_span was used
+        height_reduction: int = cls._height_reduction.pop(hwnd, 0)
+
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = old_style | WS_CAPTION
         set_window_long(hwnd, GWL_STYLE, new_style)
+
+        if height_reduction:
+            rect = RECT()
+            ctypes.windll.user32.GetWindowRect(hwnd, ctypes.byref(rect))
+            set_window_pos(
+                hwnd,
+                0,
+                0,
+                0,
+                rect.right - rect.left,
+                rect.bottom - rect.top + height_reduction,
+                SWP_NOZORDER | SWP_NOMOVE,
+            )
+            return
+
         set_window_pos(
             hwnd,
             0,
@@ -499,12 +549,12 @@ class title_bar_color:
             window (object): The window objec   t to modify (e.g., a Tk instance in Tkinter).
         """
 
-        def set_titlebar_color_accent(hwnd):
-            old_accent = (-1, -1, -1)
+        def set_titlebar_color_accent(hwnd) -> None:
+            old_accent: str = "#000000"
 
             while hwnd in accent_color_titlebars:
-                if not old_accent == get_accent_color():
-                    color = convert_color(get_accent_color())
+                if old_accent != get_accent_color():
+                    color: int = convert_color(get_accent_color())
                     old_ex_style = get_window_long(hwnd, GWL_EXSTYLE)
                     new_ex_style = old_ex_style | WS_EX_LAYERED
                     set_window_long(hwnd, GWL_EXSTYLE, new_ex_style)
@@ -649,8 +699,8 @@ class border_color:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        def set_border_color_accent(hwnd):
-            old_accent = (-1, -1, -1)
+        def set_border_color_accent(hwnd) -> None:
+            old_accent: str = "#000000"
 
             while hwnd in accent_color_borders:
                 if not old_accent == get_accent_color():
@@ -736,7 +786,7 @@ class rainbow_title_bar:
             Higher values for `color_stops` might skip most of the colors defying the purpose of the rainbow effect.
         """
 
-        def color_changer(hwnd: int, interval: int):
+        def color_changer(hwnd: int, interval: int) -> None:
             r, g, b = 200, 0, 0
             while hwnd in rnbtbs:
                 cls.current_color = (r << 16) | (g << 8) | b
@@ -923,7 +973,7 @@ class rainbow_border:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
 
-        hwnd = module_find(window)
+        hwnd: int = module_find(window)
         if hwnd in rnbbcs:
             rnbbcs.remove(hwnd)
         else:
