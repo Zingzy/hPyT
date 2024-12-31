@@ -22,7 +22,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 			- [**Impact of Hiding the Title Bar**](#impact-of-hiding-the-title-bar)
 			- [**Potential Issues**](#potential-issues)
 			- [**Solution**](#solution)
-		- [Example Usage](#example-usage)
+			- [Example Usage](#example-usage)
 			- [Comparision of the dimensions with and without `no_span=True`:](#comparision-of-the-dimensions-with-and-without-no_spantrue)
 			- [Visual Example:](#visual-example)
 	- [🌈 Rainbow TitleBar](#-rainbow-titlebar)
@@ -102,7 +102,7 @@ title_bar.hide(window, no_span = False) # hides full titlebar
 # title_bar.unhide(window)
 ```
 
-![Hide Titlebar preview](https://github.com/littlewhitecloud/hPyT/assets/71159641/03e533fe-c42a-4d84-b138-176a73ad7977)
+![Hide Titlebar preview](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/titlebar.gif)
 
 <details>
 <summary><h3>❗Important Note when hiding the titlebar</h3></summary>
@@ -204,7 +204,7 @@ To address this, a `no_span` parameter is introduced in the `hide` method. This 
 - **With `no_span=True`**:
   The content area will be resized dynamically to maintain its original dimensions.
 
-### Example Usage
+#### Example Usage
 
 ```python
 title_bar.hide(root, no_span=True)
@@ -219,6 +219,7 @@ title_bar.hide(root, no_span=True)
 - Main window dimensions: 468x497
 + Main window dimensions: 468x459
 ```
+
 #### Visual Example:
 
 <table align="center">
@@ -230,8 +231,8 @@ title_bar.hide(root, no_span=True)
   </thead>
   <tbody>
     <tr>
-      <td align="center"><img src="https://raw.githubusercontent.com/Zingzy/hPyT/main/assets/span.gif" alt="Height of the Content area changes when the no_span paramer is set to False by default" width=300></td>
-      <td align="center"><img src="https://raw.githubusercontent.com/Zingzy/hPyT/main/assets/no_span.gif" alt="Height of the Content area does not change when the no_span paramer is set to False by default" width=300></td>
+      <td align="center"><img src="https://raw.githubusercontent.com/Zingzy/hPyT/main/.github/assets/span.gif" alt="Height of the Content area changes when the no_span paramer is set to False by default" width=300></td>
+      <td align="center"><img src="https://raw.githubusercontent.com/Zingzy/hPyT/main/.github/assets/no_span.gif" alt="Height of the Content area does not change when the no_span paramer is set to False by default" width=300></td>
     </tr>
   </tbody>
 </table>
@@ -250,7 +251,7 @@ rainbow_title_bar.start(window, interval=5) # starts the rainbow titlebar
 > [!NOTE]
 > *`interval` is the time in milliseconds in which the color would change*
 
-![Rainbow TitleBar](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/rainbow_titlebar.gif)
+![Rainbow TitleBar](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/rainbow_titlebar.gif)
 
 ## 🌈 Rainbow Border
 
@@ -259,7 +260,7 @@ rainbow_border.start(window, interval=4) # starts the rainbow border
 # rainbow_border.stop(window) # stops the rainbow border
 ```
 
-![Rainbow Border](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/rainbow_border.gif)
+![Rainbow Border](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/rainbow_border.gif)
 
 ### 🔄 Synchronizing the Rainbow Effect with other elements
 
@@ -275,7 +276,7 @@ current_color = rainbow_title_bar.get_current_color() # or rainbow_border.get_cu
 # you can use this color to synchronize the color of other elements with the titlebar
 ```
 
-![synchronization example](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/synchronization-example.gif)
+![synchronization example](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/synchronization-example.gif)
 
 
 **Code for the above illustration available in [`/examples/rainbow-synchronization-example.py`](https://github.com/Zingzy/hPyT/blob/main/examples/rainbow-synchronization-example.py)**
@@ -288,7 +289,7 @@ maximize_minimize_button.hide(window) # hides both maximize and minimize button
 # maximize_minimize_button.unhide(window)
 ```
 
-![Hidden Maximize and Minimize Buttons](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/maximize_minimize.png)
+![Hidden Maximize and Minimize Buttons](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/maximize_minimize.png)
 
 ## Hide/Unhide All Buttons or Stuffs
 
@@ -297,7 +298,7 @@ all_stuffs.hide(window) # hides close button
 # all_stuffs.unhide(window)
 ```
 
-![Hide Everything](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/all_stuffs.png)
+![Hide Everything](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/all_stuffs.png)
 
 _**Tip:** to hide the text set the window title to `''`_
 
@@ -308,7 +309,7 @@ maximize_button.disable(window) # hides maximize button
 # MaximizeButton.enable(window)
 ```
 
-![Disabled Maximize Button](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/maximize.png)
+![Disabled Maximize Button](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/maximize.png)
 
 ## Enable/Disable Minimize Button
 
@@ -317,7 +318,7 @@ minimize_button.disable(window) # hides minimize button
 # MinimizeButton.enable(window)
 ```
 
-![Disabled Minimize Button](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/minimize.png)
+![Disabled Minimize Button](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/minimize.png)
 
 ## Opacity
 
@@ -326,7 +327,7 @@ opacity.set(window, 0.5) # sets the window opacity to 50%
 # opacity.set(window, 1) # resets the window opacity to 100%
 ```
 
-![Opacity 0.5 preview](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/opacity.png)
+![Opacity 0.5 preview](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/opacity.png)
 
 ## ⚡ Flashing Window
 
@@ -337,7 +338,7 @@ window_flash.flash(window, 10, 100) # flashes the window 10 times with 100ms int
 
 *Flashing Interval starts from 10ms, **default 1000ms***
 
-![Flashing Window](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/flashing.gif)
+![Flashing Window](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/flashing.gif)
 
 ## 🎨 Custom TitleBar Color
 
@@ -349,7 +350,7 @@ title_bar_color.set(window, '#ff00ff') # sets the titlebar color to magenta
 > [!NOTE]
 > *You can pass any valid color in `Hex` or `RGB` format*
 
-![Custom TitleBar Color](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/titlebar_color.png)
+![Custom TitleBar Color](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/titlebar_color.png)
 
 ### Set TitleBar Color to windows Accent Color
 
@@ -357,7 +358,7 @@ title_bar_color.set(window, '#ff00ff') # sets the titlebar color to magenta
 title_bar_color.set_accent(window) # sets the titlebar color to the current windows accent color
 ```
 
-![Accent TitleBar](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/accent_titlebar.png)
+![Accent TitleBar](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/accent_titlebar.png)
 
 > [!NOTE]
 > *The titlebar color will automatically change when the windows accent color changes*
@@ -369,7 +370,7 @@ title_text_color.set(window, '#ff00ff') # sets the titlebar text color to magent
 # title_text_color.reset(window) # resets the titlebar text color to default
 ```
 
-![Custom TitleBar Text Color](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/title_text_color.png)
+![Custom TitleBar Text Color](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/title_text_color.png)
 
 ## 🖌️ Custom Border Color
 
@@ -378,7 +379,7 @@ border_color.set(window, '#ff00ff') # sets the border color to magenta
 # border_color.reset(window) # resets the border color to default
 ```
 
-![Custom Border Color](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/border_color.png)
+![Custom Border Color](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/border_color.png)
 
 ### Set Border Color to windows Accent Color
 
@@ -386,7 +387,7 @@ border_color.set(window, '#ff00ff') # sets the border color to magenta
 border_color.set_accent(window) # sets the border color to the current windows accent color
 ```
 
-![Accent Border](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/accent_border.png)
+![Accent Border](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/accent_border.png)
 
 > [!NOTE]
 > *The border color will automatically change when the windows accent color changes*
@@ -405,7 +406,7 @@ window_frame.center(window)
 window_frame.center_relative(window, child_window)
 ```
 
-![Center Relative](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/center_relative.png)
+![Center Relative](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/center_relative.png)
 
 **Example Usecase**
 
@@ -430,7 +431,7 @@ child_window.protocol("WM_DELETE_WINDOW", on_close)
 window.mainloop()
 ```
 
-![Center Relative Example](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/center_relative_example.gif)
+![Center Relative Example](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/center_relative_example.gif)
 
 ### Other basic window management functions
 
@@ -451,7 +452,7 @@ window_animation.circle_motion(window, count=5, interval=5, radius=30)
 # moves the window in a circular motion 5 times with 5ms interval and 30px radius
 ```
 
-![Circle Motion](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/circle_motion.gif)
+![Circle Motion](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/circle_motion.gif)
 
 *The animation might appear a bit fasterer and rougher in the above preview gif than it is*
 
@@ -477,7 +478,7 @@ title_text.stylize(window, style=1)
 
 *Below is a gif demonstrating all of the available styles*
 
-![Stylize Text](https://raw.githubusercontent.com/zingzy/hPyT/main/assets/stylize_text.gif)
+![Stylize Text](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/stylize_text.gif)
 
 ## Miscellaneous
 
