@@ -1,7 +1,7 @@
 import math
 import threading
 import time
-from typing import Any, Tuple, Union, List
+from typing import Any, Tuple, Union, List, Dict
 
 try:
     import ctypes
@@ -87,7 +87,9 @@ titles: dict = {}
 class title_bar:
     """Hide or unhide the title bar of a window."""
 
-    _height_reduction: dict[int, int] = {}  # To track the height reduction applied for each window
+    _height_reduction: Dict[
+        int, int
+    ] = {}  # To track the height reduction applied for each window
 
     @classmethod
     def hide(cls, window: Any, no_span: bool = False) -> None:
