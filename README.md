@@ -53,6 +53,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [Stylize text](#stylize-text)
 	- [Workaround for other libraries](#workaround-for-other-libraries)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
+		- [v1.3.7](#v137)
 		- [v1.3.6](#v136)
 		- [v1.3.5](#v135)
 		- [v1.3.4](#v134)
@@ -82,7 +83,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.3.6
+pip install hPyT==1.3.7
 ```
 
 ## 📥 Importing
@@ -512,6 +513,12 @@ rainbow_border.start(hwnd)
 <br>
 
 ## 📜 hPyT Changelog
+
+### v1.3.7
+
+- Fix color conversion issue which returned the wrong color when the windows accent color was set to a custom color
+- Add handling for WM_NCACTIVATE and WM_NCPAINT messages to improve title bar rendering
+- Add dynamic height adjustment to hide_titlebar method using the no_span parameter
 
 ### v1.3.6
 
