@@ -5,7 +5,7 @@ A package to manipulate windows and titlebar of GUI applications made using pyth
 
 https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117df3
 
-**You can download the above app from the [github releases](https://github.com/Zingzy/hPyT/releases/tag/hPyT-preview/) to test out the package before installing/using it in your projects**
+**You can download the above app from the [github releases](https://github.com/Zingzy/hPyT-preview-app/releases/latest/) to test out the package before installing/using it in your projects**
 
 <br>
 
