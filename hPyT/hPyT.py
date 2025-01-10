@@ -115,15 +115,9 @@ class title_bar:
         def handle(hwnd: int, msg: int, wp: int, lp: int) -> int:
             if msg == WM_NCCALCSIZE and wp:
                 # Adjust the non-client area (title bar) size
-                # Only apply the changes on windows 8 and above
-                if (
-                    WINDOWS_VERSION >= 6.2
-                ):  # Windows 8 is version 6.2, Windows 10 is version 10.0
-                    # Here we are basically removing the top border (because the title bar in windows is made of 2 components: the actual titlebar and the border, both having same color)
-                    lpncsp = NCCALCSIZE_PARAMS.from_address(lp)
-                    lpncsp.rgrc[
-                        0
-                    ].top -= border_width  # Reduce the height of the title bar
+                # Here we are basically removing the top border (because the title bar in windows is made of 2 components: the actual titlebar and the border, both having same color)
+                lpncsp = NCCALCSIZE_PARAMS.from_address(lp)
+                lpncsp.rgrc[0].top -= border_width  # Reduce the height of the title bar
 
             elif msg in [WM_NCACTIVATE, WM_NCPAINT]:
                 # Prevent Windows from drawing the title bar when the window is activated or painted
@@ -165,8 +159,12 @@ class title_bar:
         if globals().get(old) is None:
             globals()[old] = get_window_long(hwnd, GWL_WNDPROC)
 
-        globals()[new] = prototype(handle)
-        set_window_long(hwnd, GWL_WNDPROC, globals()[new])
+        # Do not remove the top border when on windows 7 or lower
+        if (
+            WINDOWS_VERSION >= 6.2
+        ):  # Windows 8 is version 6.2, Windows 10 is version 10.0
+            globals()[new] = prototype(handle)
+            set_window_long(hwnd, GWL_WNDPROC, globals()[new])
 
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = (old_style & ~WS_CAPTION) | WS_BORDER
