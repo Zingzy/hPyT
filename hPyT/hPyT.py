@@ -2,6 +2,7 @@ import math
 import threading
 import time
 from typing import Any, Tuple, Union, List, Dict
+import platform
 
 try:
     import ctypes
@@ -83,6 +84,7 @@ accent_color_titlebars: List[int] = []
 accent_color_borders: List[int] = []
 titles: dict = {}
 
+WINDOWS_VERSION = float(platform.version().split('.')[0])
 
 class title_bar:
     """Hide or unhide the title bar of a window."""
@@ -104,9 +106,11 @@ class title_bar:
         def handle(hwnd: int, msg: int, wp: int, lp: int) -> int:
             if msg == WM_NCCALCSIZE and wp:
                 # Adjust the non-client area (title bar) size
-                # Here we are basically removing the top border (because the title bar in windows is made of 2 components: the actual titlebar and the border, both having same color)
-                lpncsp = NCCALCSIZE_PARAMS.from_address(lp)
-                lpncsp.rgrc[0].top -= border_width  # Reduce the height of the title bar
+                # Only apply the changes on windows 8 and above
+                if WINDOWS_VERSION >= 6.2: # Windows 8 is version 6.2, Windows 10 is version 10.0
+                    # Here we are basically removing the top border (because the title bar in windows is made of 2 components: the actual titlebar and the border, both having same color)
+                    lpncsp = NCCALCSIZE_PARAMS.from_address(lp)
+                    lpncsp.rgrc[0].top -= border_width  # Reduce the height of the title bar
 
             elif msg in [WM_NCACTIVATE, WM_NCPAINT]:
                 # Prevent Windows from drawing the title bar when the window is activated or painted
