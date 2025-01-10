@@ -12,8 +12,16 @@ except ImportError:
     raise ImportError("hPyT import Error : No Windows Enviorment Found")
 
 set_window_pos = ctypes.windll.user32.SetWindowPos
-set_window_long = ctypes.windll.user32.SetWindowLongPtrW
-get_window_long = ctypes.windll.user32.GetWindowLongPtrA
+
+# Check if the system is 32-bit or 64-bit
+# GetWindowLongPtrA and SetWindowLongPtrA are not supported in 32-bit systems
+if platform.architecture()[0] == '64bit':
+    set_window_long = ctypes.windll.user32.SetWindowLongPtrW
+    get_window_long = ctypes.windll.user32.GetWindowLongPtrA
+else:
+    set_window_long = ctypes.windll.user32.SetWindowLongW
+    get_window_long = ctypes.windll.user32.GetWindowLongA
+
 def_window_proc = ctypes.windll.user32.DefWindowProcW
 call_window_proc = ctypes.windll.user32.CallWindowProcW
 flash_window_ex = ctypes.windll.user32.FlashWindowEx
