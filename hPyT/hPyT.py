@@ -15,7 +15,7 @@ set_window_pos = ctypes.windll.user32.SetWindowPos
 
 # Check if the system is 32-bit or 64-bit
 # GetWindowLongPtrA and SetWindowLongPtrA are not supported in 32-bit systems
-if platform.architecture()[0] == '64bit':
+if platform.architecture()[0] == "64bit":
     set_window_long = ctypes.windll.user32.SetWindowLongPtrW
     get_window_long = ctypes.windll.user32.GetWindowLongPtrA
 else:
@@ -92,7 +92,8 @@ accent_color_titlebars: List[int] = []
 accent_color_borders: List[int] = []
 titles: dict = {}
 
-WINDOWS_VERSION = float(platform.version().split('.')[0])
+WINDOWS_VERSION = float(platform.version().split(".")[0])
+
 
 class title_bar:
     """Hide or unhide the title bar of a window."""
@@ -115,10 +116,14 @@ class title_bar:
             if msg == WM_NCCALCSIZE and wp:
                 # Adjust the non-client area (title bar) size
                 # Only apply the changes on windows 8 and above
-                if WINDOWS_VERSION >= 6.2: # Windows 8 is version 6.2, Windows 10 is version 10.0
+                if (
+                    WINDOWS_VERSION >= 6.2
+                ):  # Windows 8 is version 6.2, Windows 10 is version 10.0
                     # Here we are basically removing the top border (because the title bar in windows is made of 2 components: the actual titlebar and the border, both having same color)
                     lpncsp = NCCALCSIZE_PARAMS.from_address(lp)
-                    lpncsp.rgrc[0].top -= border_width  # Reduce the height of the title bar
+                    lpncsp.rgrc[
+                        0
+                    ].top -= border_width  # Reduce the height of the title bar
 
             elif msg in [WM_NCACTIVATE, WM_NCPAINT]:
                 # Prevent Windows from drawing the title bar when the window is activated or painted
