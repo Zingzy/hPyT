@@ -1256,7 +1256,10 @@ class title_text:
             title = ctypes.create_unicode_buffer(1024)
             ctypes.windll.user32.GetWindowTextW(hwnd, title, 1024)
             titles[hwnd] = title.value
-        title = ctypes.create_unicode_buffer(stylize_text(titles[hwnd], style))
+        stylized_title = stylize_text(titles[hwnd], style)
+        title = ctypes.create_unicode_buffer(
+            stylized_title, size=len(stylized_title.encode("unicode_escape"))
+        )
         ctypes.windll.user32.SetWindowTextW(hwnd, title)
 
     @classmethod
@@ -1309,7 +1312,7 @@ def stylize_text(text: str, style: int) -> str:
     if style < 1 or style > len(styles):
         raise ValueError("Invalid style number")
 
-    translation_table: dict[int, int] = str.maketrans(normal, styles[style - 1])
+    translation_table: Dict[int, int] = str.maketrans(normal, styles[style - 1])
     return text.translate(translation_table)
 
 
