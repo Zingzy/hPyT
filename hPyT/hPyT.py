@@ -2,6 +2,7 @@ import math
 import threading
 import time
 from typing import Any, Tuple, Union, List, Dict
+import platform
 
 try:
     import ctypes
@@ -11,8 +12,16 @@ except ImportError:
     raise ImportError("hPyT import Error : No Windows Enviorment Found")
 
 set_window_pos = ctypes.windll.user32.SetWindowPos
-set_window_long = ctypes.windll.user32.SetWindowLongPtrW
-get_window_long = ctypes.windll.user32.GetWindowLongPtrA
+
+# Check if the system is 32-bit or 64-bit
+# GetWindowLongPtrA and SetWindowLongPtrA are not supported in 32-bit systems
+if platform.architecture()[0] == "64bit":
+    set_window_long = ctypes.windll.user32.SetWindowLongPtrW
+    get_window_long = ctypes.windll.user32.GetWindowLongPtrA
+else:
+    set_window_long = ctypes.windll.user32.SetWindowLongW
+    get_window_long = ctypes.windll.user32.GetWindowLongA
+
 def_window_proc = ctypes.windll.user32.DefWindowProcW
 call_window_proc = ctypes.windll.user32.CallWindowProcW
 flash_window_ex = ctypes.windll.user32.FlashWindowEx
@@ -83,6 +92,8 @@ accent_color_titlebars: List[int] = []
 accent_color_borders: List[int] = []
 titles: dict = {}
 
+WINDOWS_VERSION = float(platform.version().split(".")[0])
+
 
 class title_bar:
     """Hide or unhide the title bar of a window."""
@@ -148,8 +159,12 @@ class title_bar:
         if globals().get(old) is None:
             globals()[old] = get_window_long(hwnd, GWL_WNDPROC)
 
-        globals()[new] = prototype(handle)
-        set_window_long(hwnd, GWL_WNDPROC, globals()[new])
+        # Do not remove the top border when on windows 7 or lower
+        if (
+            WINDOWS_VERSION >= 6.2
+        ):  # Windows 8 is version 6.2, Windows 10 is version 10.0
+            globals()[new] = prototype(handle)
+            set_window_long(hwnd, GWL_WNDPROC, globals()[new])
 
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = (old_style & ~WS_CAPTION) | WS_BORDER
@@ -1256,7 +1271,10 @@ class title_text:
             title = ctypes.create_unicode_buffer(1024)
             ctypes.windll.user32.GetWindowTextW(hwnd, title, 1024)
             titles[hwnd] = title.value
-        title = ctypes.create_unicode_buffer(stylize_text(titles[hwnd], style))
+        stylized_title = stylize_text(titles[hwnd], style)
+        title = ctypes.create_unicode_buffer(
+            stylized_title, size=len(stylized_title.encode("unicode_escape"))
+        )
         ctypes.windll.user32.SetWindowTextW(hwnd, title)
 
     @classmethod
@@ -1309,7 +1327,7 @@ def stylize_text(text: str, style: int) -> str:
     if style < 1 or style > len(styles):
         raise ValueError("Invalid style number")
 
-    translation_table: dict[int, int] = str.maketrans(normal, styles[style - 1])
+    translation_table: Dict[int, int] = str.maketrans(normal, styles[style - 1])
     return text.translate(translation_table)
 
 
