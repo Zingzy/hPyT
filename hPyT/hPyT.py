@@ -160,9 +160,7 @@ class title_bar:
             globals()[old] = get_window_long(hwnd, GWL_WNDPROC)
 
         # Do not remove the top border when on windows 7 or lower
-        if (
-            WINDOWS_VERSION >= 6.2
-        ):  # Windows 8 is version 6.2, Windows 10 is version 10.0
+        if WINDOWS_VERSION >= 10.0:  # Windows 10 is version 10.0
             globals()[new] = prototype(handle)
             set_window_long(hwnd, GWL_WNDPROC, globals()[new])
 
