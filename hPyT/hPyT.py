@@ -1130,6 +1130,7 @@ class window_frame:
         hwnd: int = module_find(window)
         ctypes.windll.user32.ShowWindow(hwnd, 9)
 
+
 class corner_radius:
     """Control the corner radius of a window. This feature is only supported on Windows 11 and later versions."""
 
@@ -1140,8 +1141,8 @@ class corner_radius:
 
         Args:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
-            style (str): The corner style to apply. Can be "square", "round-small", or "round". 
-                        For compatibility, "roundsmall", "small-round", and "round small" are also accepted. 
+            style (str): The corner style to apply. Can be "square", "round-small", or "round".
+                        For compatibility, "roundsmall", "small-round", and "round small" are also accepted.
                         Default is "round".
 
         Example:
@@ -1152,34 +1153,30 @@ class corner_radius:
         Raises:
             ValueError: If the specified style is not one of "square", "round-small", or "round".
         """
-        
+
         style = style.lower()
         # Map alternative style names for compatibility
         if style in ["roundsmall", "small-round", "round small"]:
             style = "round-small"
-            
+
         if style not in ["square", "round-small", "round"]:
             raise ValueError('Style must be one of "square", "round-small", or "round"')
 
         hwnd: int = module_find(window)
-        
+
         # DWM_WINDOW_CORNER_PREFERENCE values:
         # DWMWCP_DEFAULT    = 0 (Let Windows decide)
         # DWMWCP_DONOTROUND = 1 (Square)
         # DWMWCP_ROUND      = 2 (Round)
         # DWMWCP_ROUNDSMALL = 3 (Round Small)
-        
-        value = {
-            "square": 1,
-            "round": 2,
-            "round-small": 3
-        }[style]
-        
+
+        value = {"square": 1, "round": 2, "round-small": 3}[style]
+
         ctypes.windll.dwmapi.DwmSetWindowAttribute(
             hwnd,
             33,  # DWMWA_WINDOW_CORNER_PREFERENCE
             ctypes.byref(ctypes.c_int(value)),
-            4
+            4,
         )
 
     @classmethod
@@ -1190,14 +1187,15 @@ class corner_radius:
         Args:
             window (object): The window object to modify (e.g., a Tk instance in Tkinter).
         """
-        
+
         hwnd: int = module_find(window)
         ctypes.windll.dwmapi.DwmSetWindowAttribute(
             hwnd,
             33,  # DWMWA_WINDOW_CORNER_PREFERENCE
             ctypes.byref(ctypes.c_int(0)),  # Default (Let Windows decide)
-            4
+            4,
         )
+
 
 class window_animation:
     """Add linear animations to a window."""
@@ -1308,6 +1306,40 @@ class window_animation:
         thread = threading.Thread(target=motion)
         thread.daemon = True
         thread.start()
+
+
+class window_dwm:
+    """Control DWM (Desktop Window Manager) specific features."""
+
+    @classmethod
+    def toggle_dwm_animations(cls, window: Any, enabled: bool = True) -> None:
+        """
+        Toggle DWM transitions/animations for a window.
+        This affects built-in Windows animations like minimize/maximize,
+        but does not affect custom animations.
+
+        Args:
+            window (object): The window object to modify.
+            enabled (bool): True to enable animations, False to disable.
+
+        Example:
+            # Disable DWM animations
+            >>> window_dwm.toggle_dwm_animations(window, False)
+
+            # Re-enable DWM animations
+            >>> window_dwm.toggle_dwm_animations(window, True)
+        """
+        hwnd: int = module_find(window)
+
+        # DWMWA_TRANSITIONS_FORCEDISABLED = 3
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd,
+            3,  # DWMWA_TRANSITIONS_FORCEDISABLED
+            ctypes.byref(
+                ctypes.c_int(0 if enabled else 1)
+            ),  # 0 to enable, 1 to disable
+            4,
+        )
 
 
 class title_text:
