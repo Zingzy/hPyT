@@ -1341,6 +1341,32 @@ class window_dwm:
             4,
         )
 
+    @classmethod
+    def toggle_rtl_layout(cls, window: Any, enabled: bool = True) -> None:
+        """
+        Set Right-to-Left layout for window's non-client area.
+
+        Args:
+            window (object): The window object to modify.
+            enabled (bool): True for RTL layout, False for default LTR layout.
+
+        Example:
+            # Enable RTL layout (for Arabic, Hebrew, etc.)
+            >>> window_dwm.set_rtl_layout(window, True)
+
+            # Reset to default Left-to-Right layout
+            >>> window_dwm.set_rtl_layout(window, False)
+        """
+        hwnd: int = module_find(window)
+
+        # DWMWA_NONCLIENT_RTL_LAYOUT = 6
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd,
+            6,  # DWMWA_NONCLIENT_RTL_LAYOUT
+            ctypes.byref(ctypes.c_int(1 if enabled else 0)),
+            4,
+        )
+
 
 class title_text:
     """Play with the title of a window."""
