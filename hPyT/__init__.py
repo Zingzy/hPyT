@@ -22,6 +22,7 @@ from .hPyT import (
     window_animation,
     window_flash,
     window_frame,
+    corner_radius,
     get_accent_color,
 )
 
@@ -37,6 +38,7 @@ __all__ = [
     "title_bar_text_color",
     "rainbow_title_bar",
     "window_frame",
+    "corner_radius",
     "window_animation",
     "title_text",
     "border_color",

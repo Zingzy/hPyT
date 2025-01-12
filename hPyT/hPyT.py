@@ -59,6 +59,10 @@ FLASHW_ALL = 3
 FLASHW_TIMER = 4
 FLASHW_TIMERNOFG = 12
 
+WS_CHILD = 0x40000000
+WS_POPUP = 0x80000000
+WS_VISIBLE = 0x10000000
+
 
 class FLASHWINFO(ctypes.Structure):
     _fields_ = [
@@ -1126,6 +1130,74 @@ class window_frame:
         hwnd: int = module_find(window)
         ctypes.windll.user32.ShowWindow(hwnd, 9)
 
+class corner_radius:
+    """Control the corner radius of a window. This feature is only supported on Windows 11 and later versions."""
+
+    @classmethod
+    def set(cls, window: Any, style: str = "round") -> None:
+        """
+        Set the corner radius style of the specified window.
+
+        Args:
+            window (object): The window object to modify (e.g., a Tk instance in Tkinter).
+            style (str): The corner style to apply. Can be "square", "round-small", or "round". 
+                        For compatibility, "roundsmall", "small-round", and "round small" are also accepted. 
+                        Default is "round".
+
+        Example:
+            >>> corner_radius.set(window, "round-small")
+            >>> corner_radius.set(window, "round")
+            >>> corner_radius.set(window, "square")
+
+        Raises:
+            ValueError: If the specified style is not one of "square", "round-small", or "round".
+        """
+        
+        style = style.lower()
+        # Map alternative style names for compatibility
+        if style in ["roundsmall", "small-round", "round small"]:
+            style = "round-small"
+            
+        if style not in ["square", "round-small", "round"]:
+            raise ValueError('Style must be one of "square", "round-small", or "round"')
+
+        hwnd: int = module_find(window)
+        
+        # DWM_WINDOW_CORNER_PREFERENCE values:
+        # DWMWCP_DEFAULT    = 0 (Let Windows decide)
+        # DWMWCP_DONOTROUND = 1 (Square)
+        # DWMWCP_ROUND      = 2 (Round)
+        # DWMWCP_ROUNDSMALL = 3 (Round Small)
+        
+        value = {
+            "square": 1,
+            "round": 2,
+            "round-small": 3
+        }[style]
+        
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd,
+            33,  # DWMWA_WINDOW_CORNER_PREFERENCE
+            ctypes.byref(ctypes.c_int(value)),
+            4
+        )
+
+    @classmethod
+    def reset(cls, window: Any) -> None:
+        """
+        Reset the corner radius of the specified window to the system default.
+
+        Args:
+            window (object): The window object to modify (e.g., a Tk instance in Tkinter).
+        """
+        
+        hwnd: int = module_find(window)
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd,
+            33,  # DWMWA_WINDOW_CORNER_PREFERENCE
+            ctypes.byref(ctypes.c_int(0)),  # Default (Let Windows decide)
+            4
+        )
 
 class window_animation:
     """Add linear animations to a window."""
