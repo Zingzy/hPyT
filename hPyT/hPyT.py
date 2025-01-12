@@ -1,3 +1,4 @@
+import ctypes.wintypes
 import math
 import threading
 import time
@@ -1365,6 +1366,39 @@ class window_dwm:
             6,  # DWMWA_NONCLIENT_RTL_LAYOUT
             ctypes.byref(ctypes.c_int(1 if enabled else 0)),
             4,
+        )
+
+    @classmethod
+    def toggle_cloak(cls, window: Any, enabled: bool = True) -> None:
+        """
+        Toggle window cloaking (invisibility while still being composed by DWM).
+        Useful for DirectComposition animations and special effects.
+        Note: Only supported on Windows 8 and later.
+
+        Args:
+            window (object): The window object to modify.
+            enabled (bool): True to cloak (hide) the window, False to uncloak (show).
+
+        Example:
+            # Cloak (hide) the window
+            >>> window_dwm.toggle_cloak(window, True)
+
+            # Uncloak (show) the window
+            >>> window_dwm.toggle_cloak(window, False)
+
+        Notes:
+            - Window remains composed by DWM even when cloaked
+            - Particularly useful with DirectComposition for layered child window animations
+            - Does not affect window functionality, only visibility
+        """
+        hwnd: int = module_find(window)
+
+        # DWMWA_CLOAK = 13
+        ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd,
+            13,  # DWMWA_CLOAK
+            ctypes.byref(ctypes.wintypes.BOOL(enabled)),
+            ctypes.sizeof(ctypes.wintypes.BOOL(enabled)),
         )
 
 
