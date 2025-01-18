@@ -1420,14 +1420,26 @@ class title_text:
         """
 
         hwnd: int = module_find(window)
-        # If there's a cached style, apply it to the new title
+        # If there's a cached style, verify current title and apply style to the new title
         if hwnd in cls._title_cache:
-            original_title, styled_title, current_style = cls._title_cache[hwnd]
-            if current_style is not None:
+            cached_original, cached_styled, current_style = cls._title_cache[hwnd]
+
+            # Get current window title to verify cache consistency
+            buffer_size = 1024
+            buffer = ctypes.create_unicode_buffer(buffer_size)
+            ctypes.windll.user32.GetWindowTextW(hwnd, buffer, buffer_size)
+            current_title = buffer.value
+
+            # Only apply cached style if current title matches our cache
+            if current_style is not None and current_title == cached_styled:
                 styled_title = stylize_text(title, current_style)
                 cls._title_cache[hwnd] = (title, styled_title, current_style)
                 ctypes.windll.user32.SetWindowTextW(hwnd, styled_title)
                 return
+
+            # If cache is invalid, clear it
+            del cls._title_cache[hwnd]
+
         # Otherwise just set the new title
         ctypes.windll.user32.SetWindowTextW(hwnd, title)
 
