@@ -1,7 +1,7 @@
 """
 hPyT - Hack Python Titlebar
 Author - zingzy
-version - 1.3.7
+version - 1.4.0
 License - MIT
 Homepage - https://github.com/zingzy/hPyT
 """
@@ -48,4 +48,4 @@ __all__ = [
     "get_accent_color",
 ]
 
-__version__ = "1.3.7"
+__version__ = "1.4.0"

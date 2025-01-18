@@ -1,11 +1,11 @@
 # hPyT - Hack Python Titlebar
 
 A package to manipulate windows and titlebar of GUI applications made using python
-**Supports Both Windows 11 and 10**
+**Supports Windows 7-11**
 
-https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117df3
+https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/hPyT-preview-app.mp4
 
-**You can download the above app from the [github releases](https://github.com/Zingzy/hPyT-preview-app/releases/latest/) to test out the package before installing/using it in your projects**
+**You can download the above hPyT-preview-app from [github releases](https://github.com/Zingzy/hPyT-preview-app/releases/latest/) to test out the package before using it in your projects**
 
 <br>
 
@@ -17,14 +17,15 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [📚 Supported Libraries](#-supported-libraries)
 	- [📦 Installing](#-installing)
 	- [📥 Importing](#-importing)
+	- [NEW Features in `v1.4.0` 🎉](#new-features-in-v140-)
 	- [Hide/Unhide TitleBar](#hideunhide-titlebar)
 			- [**Understanding Window Geometry**](#understanding-window-geometry)
-			- [**Impact of Hiding the Title Bar**](#impact-of-hiding-the-title-bar)
-			- [**Potential Issues**](#potential-issues)
-			- [**Solution**](#solution)
-			- [Example Usage](#example-usage)
-			- [Comparision of the dimensions with and without `no_span=True`:](#comparision-of-the-dimensions-with-and-without-no_spantrue)
-			- [Visual Example:](#visual-example)
+		- [**Impact of Hiding the Title Bar**](#impact-of-hiding-the-title-bar)
+		- [**Potential Issues**](#potential-issues)
+		- [**Solution**](#solution)
+		- [Example Usage](#example-usage)
+		- [Comparision of the dimensions with and without `no_span=True`:](#comparision-of-the-dimensions-with-and-without-no_spantrue)
+		- [Visual Example:](#visual-example)
 	- [🌈 Rainbow TitleBar](#-rainbow-titlebar)
 	- [🌈 Rainbow Border](#-rainbow-border)
 		- [🔄 Synchronizing the Rainbow Effect with other elements](#-synchronizing-the-rainbow-effect-with-other-elements)
@@ -32,13 +33,19 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [Hide/Unhide All Buttons or Stuffs](#hideunhide-all-buttons-or-stuffs)
 	- [Enable/Disable Maximize Button](#enabledisable-maximize-button)
 	- [Enable/Disable Minimize Button](#enabledisable-minimize-button)
-	- [Opacity](#opacity)
-	- [⚡ Flashing Window](#-flashing-window)
 	- [🎨 Custom TitleBar Color](#-custom-titlebar-color)
 		- [Set TitleBar Color to windows Accent Color](#set-titlebar-color-to-windows-accent-color)
 	- [🖌️ Custom TitleBar Text Color](#️-custom-titlebar-text-color)
 	- [🖌️ Custom Border Color](#️-custom-border-color)
 		- [Set Border Color to windows Accent Color](#set-border-color-to-windows-accent-color)
+	- [Window Corner Radius](#window-corner-radius)
+	- [Window DWM Manipulation](#window-dwm-manipulation)
+		- [Enable RTL Layout for the DWM Window](#enable-rtl-layout-for-the-dwm-window)
+		- [Disable DWM Transitions for the DWM Window](#disable-dwm-transitions-for-the-dwm-window)
+		- [Window Cloaking](#window-cloaking)
+			- [Example of window rendering with and without cloacking](#example-of-window-rendering-with-and-without-cloacking)
+	- [Opacity](#opacity)
+	- [⚡ Flashing Window](#-flashing-window)
 	- [💻 Window Management](#-window-management)
 		- [Center a window on the screen](#center-a-window-on-the-screen)
 		- [Center a secondary window relative to the primary window](#center-a-secondary-window-relative-to-the-primary-window)
@@ -48,11 +55,12 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 		- [Verical Shake](#verical-shake)
 		- [Horizontal Shake](#horizontal-shake)
 	- [✏️ Stylize text](#️-stylize-text)
-	- [Miscellaneous](#miscellaneous)
-	- [Get Windows Accent Color](#get-windows-accent-color)
-	- [Stylize text](#stylize-text)
 	- [Workaround for other libraries](#workaround-for-other-libraries)
+	- [Miscellaneous](#miscellaneous)
+		- [Get Windows Accent Color](#get-windows-accent-color)
+		- [Stylize text](#stylize-text)
 	- [📜 hPyT Changelog](#-hpyt-changelog)
+		- [v1.4.0](#v140)
 		- [v1.3.7](#v137)
 		- [v1.3.6](#v136)
 		- [v1.3.5](#v135)
@@ -78,12 +86,15 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 - PySide
 - WxPython
 - Kivy
-- And many more
+- Almost all other UI libraries
+  
+> [!IMPORTANT]
+> follow this [section](#workaround-for-other-libraries) to see how to use hPyT with other libraries
 
 ## 📦 Installing
 
 ```powershell
-pip install hPyT==1.3.7
+pip install hPyT==1.4.0
 ```
 
 ## 📥 Importing
@@ -95,6 +106,14 @@ from customtkinter import * # you can use any other library from the above menti
 window = CTk() # creating a window using CustomTkinter
 ```
 
+## NEW Features in `v1.4.0` 🎉
+
+- Function to change `corner radius` of the window with the [`hPyT.corner_radius`](#window-corner-radius) module 
+- Functions to manipulate `DWM` window attributes with the [`hPyT.window_dwm`](#window-dwm-manipulation) module
+   - Enable **RTL layout**
+   - Disable **DWM transitions**
+   - Cloak the window
+
 ## Hide/Unhide TitleBar
 
 ```python
@@ -103,10 +122,14 @@ title_bar.hide(window, no_span = False) # hides full titlebar
 # title_bar.unhide(window)
 ```
 
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `no_span` | `bool` | `False` | If `True`, the content area height will not be adjusted to accommodate the title bar. |
+
 ![Hide Titlebar preview](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/titlebar.png)
 
 <details>
-<summary><h3>❗Important Note when hiding the titlebar</h3></summary>
+<summary><h3>❗Important Note when hiding the titlebar and using <code>no_span</code> parameter</h3></summary>
 
 When hiding a title bar, the application window's total geometry and its content area geometry behave differently, which may introduce ambiguities. Here's a detailed explanation of the issue:
 
@@ -115,19 +138,20 @@ When hiding a title bar, the application window's total geometry and its content
 1. **Full Window Dimensions**:
    - Includes the content area, title bar, and borders.
    - When the user specifies dimensions (e.g., `400x400`), it usually represents the **content area dimensions**. The total window height becomes `content height + title bar height + border width`.
-   - The color of the `top border` and `title bar` is usually the same, making it appear as a single entity.
+   - The color of the `top border` and `title bar` is usually the same in **windows 11 & 10**, making it appear as a single entity. So when hiding the title bar, we also need to hide the top border.
+   - However, in **windows 7 & 8**, the top border is a different color from the title bar, so we don't need to hide the top border when hiding the title bar. Moreover removing the top border will make the window behave abnormally in these versions.
 
 2. **Content Area Dimensions**:
    - Represents only the usable area inside the window, excluding the title bar and borders.
 
-#### **Impact of Hiding the Title Bar**
+### **Impact of Hiding the Title Bar**
 
 When the title bar is hidden:
 - The **content area height** expands to occupy the height previously used by the title bar. For example, a `400x400` content area might expand to `400x438` (assuming the visual title bar height is 38px).
 
 Better illustrated in the following example:
 
-```py
+```python
 ...
 
 def show_window_dimensions():
@@ -192,12 +216,12 @@ Content window dimensions: 450x488
 
 By the above example, you can see that the content area height has increased from `450px` to `488px` after hiding the title bar.
 
-#### **Potential Issues**
+### **Potential Issues**
 This automatic resizing may cause layout problems or unintended behavior in some applications. For instance:
 - UI elements might **overlap** or **stretch**.
 - Custom layouts may require recalibration.
 
-#### **Solution**
+### **Solution**
 To address this, a `no_span` parameter is introduced in the `hide` method. This parameter allows users to control whether the content area height should be adjusted dynamically to maintain its original size.
 
 - **Default Behavior (`no_span=False`)**:
@@ -205,13 +229,13 @@ To address this, a `no_span` parameter is introduced in the `hide` method. This 
 - **With `no_span=True`**:
   The content area will be resized dynamically to maintain its original dimensions.
 
-#### Example Usage
+### Example Usage
 
 ```python
 title_bar.hide(root, no_span=True)
 ```
 
-#### Comparision of the dimensions with and without `no_span=True`:
+### Comparision of the dimensions with and without `no_span=True`:
 
 ```diff
 - Content window dimensions: 450x488
@@ -221,22 +245,15 @@ title_bar.hide(root, no_span=True)
 + Main window dimensions: 468x459
 ```
 
-#### Visual Example:
+### Visual Example:
 
-<table align="center">
-  <thead>
-    <tr>
-      <th><code>no_span = False</code></th>
-      <th><code>no_span = True</code></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><img src="https://raw.githubusercontent.com/Zingzy/hPyT/main/.github/assets/span.gif" alt="Height of the Content area changes when the no_span paramer is set to False by default" width=300></td>
-      <td align="center"><img src="https://raw.githubusercontent.com/Zingzy/hPyT/main/.github/assets/no_span.gif" alt="Height of the Content area does not change when the no_span paramer is set to False by default" width=300></td>
-    </tr>
-  </tbody>
-</table>
+<div align="center">
+
+| `no_span = False` | `no_span = True` |
+| :---------------: | :--------------: |
+| <img src="https://raw.githubusercontent.com/Zingzy/hPyT/main/.github/assets/span.gif" alt="Height of the Content area changes when the no_span paramer is set to False by default" width=300> | <img src="https://raw.githubusercontent.com/Zingzy/hPyT/main/.github/assets/no_span.gif" alt="Height of the Content area does not change when the no_span paramer is set to False by default" width=300> |
+
+</div>
 
 ---
 
@@ -244,22 +261,33 @@ title_bar.hide(root, no_span=True)
 
 ## 🌈 Rainbow TitleBar
 
+This feature is only supported on Windows 11.
+
 ```python
 rainbow_title_bar.start(window, interval=5) # starts the rainbow titlebar
 # rainbow_title_bar.stop(window) # stops the rainbow titlebar
 ```
 
-> [!NOTE]
-> *`interval` is the time in milliseconds in which the color would change*
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `interval` | `int` | `5` | The time in milliseconds in which the color would change. |
+| `color_stops` | `int` | `5` | The number of color stops between each RGB value. |
 
 ![Rainbow TitleBar](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/rainbow_titlebar.gif)
 
 ## 🌈 Rainbow Border
 
+This feature is only supported on Windows 11.
+
 ```python
 rainbow_border.start(window, interval=4) # starts the rainbow border
 # rainbow_border.stop(window) # stops the rainbow border
 ```
+
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `interval` | `int` | `5` | The time in milliseconds in which the color would change. |
+| `color_stops` | `int` | `5` | The number of color stops between each RGB value. |
 
 ![Rainbow Border](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/rainbow_border.gif)
 
@@ -301,7 +329,8 @@ all_stuffs.hide(window) # hides close button
 
 ![Hide Everything](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/all_stuffs.png)
 
-_**Tip:** to hide the text set the window title to `''`_
+> [!TIP]
+> **To hide the text set the window title to `''`**
 
 ## Enable/Disable Maximize Button
 
@@ -321,35 +350,19 @@ minimize_button.disable(window) # hides minimize button
 
 ![Disabled Minimize Button](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/minimize.png)
 
-## Opacity
-
-```python
-opacity.set(window, 0.5) # sets the window opacity to 50%
-# opacity.set(window, 1) # resets the window opacity to 100%
-```
-
-![Opacity 0.5 preview](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/opacity.png)
-
-## ⚡ Flashing Window
-
-```python
-window_flash.flash(window, 10, 100) # flashes the window 10 times with 100ms interval
-# window_flash.stop(window) # stops the flashing immediately
-```
-
-*Flashing Interval starts from 10ms, **default 1000ms***
-
-![Flashing Window](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/flashing.gif)
-
 ## 🎨 Custom TitleBar Color
 
+This feature is only supported on Windows 11.
+
 ```python
-title_bar_color.set(window, '#ff00ff') # sets the titlebar color to magenta
+title_bar_color.set(window, color='#ff00ff') # sets the titlebar color to magenta
 # title_bar_color.reset(window) # resets the titlebar color to default
 ```
 
-> [!NOTE]
-> *You can pass any valid color in `Hex` or `RGB` format*
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `color` | `Union[str, Tuple[int]]` | ❌ | The color to set the titlebar to in either Hex (string) or RGB (tuple of integers) format |
+
 
 ![Custom TitleBar Color](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/titlebar_color.png)
 
@@ -366,19 +379,31 @@ title_bar_color.set_accent(window) # sets the titlebar color to the current wind
 
 ## 🖌️ Custom TitleBar Text Color
 
+This feature is only supported on Windows 11.
+
 ```python
-title_text_color.set(window, '#ff00ff') # sets the titlebar text color to magenta
-# title_text_color.reset(window) # resets the titlebar text color to default
+title_bar_text_color.set(window, color='#ff00ff') # sets the titlebar text color to magenta
+# title_bar_text_color.reset(window) # resets the titlebar text color to default
 ```
+
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `color` | `Union[str, Tuple[int]]` | ❌ | The color to set the titlebar text to in either Hex (string) or RGB (tuple of integers) format |
 
 ![Custom TitleBar Text Color](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/title_text_color.png)
 
 ## 🖌️ Custom Border Color
 
+This feature is only supported on Windows 11.
+
 ```python
-border_color.set(window, '#ff00ff') # sets the border color to magenta
+border_color.set(window, color='#ff00ff') # sets the border color to magenta
 # border_color.reset(window) # resets the border color to default
 ```
+
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `color` | `Union[str, Tuple[int]]` | ❌ | The color to set the border to in either Hex (string) or RGB (tuple of integers) format |
 
 ![Custom Border Color](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/border_color.png)
 
@@ -392,6 +417,118 @@ border_color.set_accent(window) # sets the border color to the current windows a
 
 > [!NOTE]
 > *The border color will automatically change when the windows accent color changes*
+
+## Window Corner Radius
+
+This feature is only supported on Windows 11.
+
+```python
+corner_radius.set(window, style="round-small") # sets the window border radius to round-small
+# corner_radius.reset(window) # resets the window border radius to default
+```
+
+**List of available styles**:
+
+<div align="center">
+
+| Style | Preview |
+| :---: | :---: |
+| `round-small` | <img src="https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/corner_small_round.png" alt="Round-small" width=400> |
+| `square` | <img src="https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/corner_square.png" alt="Square" width=400> |
+| `round` | <img src="https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/corner_round.png" alt="Round" width=400> |
+
+</div>
+
+## Window DWM Manipulation
+
+`DWM` - **Desktop Window Manager** is the component of a window which controls `non-client area of the window`. The features below are generally used to improve the **accessibility** of a window.
+
+### Enable RTL Layout for the DWM Window
+
+```python
+window_dwm.toggle_rtl_layout(window, enabled=True) # enables RTL layout for the window
+# window_dwm.toggle_rtl_layout(window, enabled=False) # disables RTL layout for the window
+```
+
+![RTL Layout](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/dwm_rtl.png)
+
+> [!NOTE]
+> *This feature enables the **RTL layout** for the **non-client area** of the window which includes the **titlebar**, **border**, etc.*
+
+### Disable DWM Transitions for the DWM Window
+
+Disabling DWM Transitions will make the animations for minimize, maximize, restore, etc. more snappy and faster.
+
+```python
+window_dwm.toggle_dwm_transitions(window, enabled=False) # disables DWM transitions for the window
+# window_dwm.toggle_dwm_transitions(window, enabled=True) # enables DWM transitions for the window
+```
+
+<div align="center">
+
+| DWM Transitions `Disabled` | DWM Transitions `Enabled` |
+| :----------------------: | :---------------------: |
+| ![DWM Transitions Disabled](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/dwm_transitions_disabled.gif) | ![DWM Transitions Enabled](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/dwm_transitions_enabled.gif) |
+
+</div>
+
+> [!NOTE]
+> *This will only affect the minimize, maximize, restore, etc. animations. It will not affect custom animations.*
+
+> [!IMPORTANT]
+> *This feature won't work if the global animations are disabled by the user in the windows settings.*
+
+### Window Cloaking
+
+If window cloaking is enabled, the window will be hidden while still being composed by DWM i.e the window will be rendered but it will not be visible to the user. 
+
+```python
+window_dwm.toggle_cloak(window, enabled=True) # hides the window
+
+# Do complex taks like rendering window widgets
+
+window_dwm.toggle_cloak(window, enabled=False) # shows the window
+```
+
+> [!TIP]
+> *By cloaking a window, `DWM` can optimize the **rendering process** since it doesn't have to display the window's content on the screen. This can help **improve the performance** of applications, especially those with complex UI elements or animations.*
+
+#### Example of window rendering with and without cloacking
+
+<div align="center">
+
+| Cloacking Used | Cloacking Not Used |
+| :------------: | :---------------: |
+| ![Cloacking Used](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/dwm_cloak_example.gif) | ![Cloacking Not Used](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/dwm_no_cloak_example.gif) |
+
+</div>
+
+## Opacity
+
+```python
+opacity.set(window, opacity=0.5) # sets the window opacity to 50%
+# opacity.set(window, opacity=1.0) # resets the window opacity to 100%
+```
+
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `opacity` | `float` | ❌ | The opacity to set the window to. It should be a value between 0 (**transparent**) and 1.0 (**opaque**). |
+
+![Opacity 0.5 preview](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/opacity.png)
+
+## ⚡ Flashing Window
+
+```python
+window_flash.flash(window, count=10, interval=100) # flashes the window 10 times with 100ms interval
+# window_flash.stop(window) # stops the flashing immediately
+```
+
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `count` | `int` | `5` | The number of times the window will flash. |
+| `interval` | `int` | `1000` | The time in milliseconds in which the window will flash. |
+
+![Flashing Window](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/flashing.gif)
 
 ## 💻 Window Management
 
@@ -453,6 +590,12 @@ window_animation.circle_motion(window, count=5, interval=5, radius=30)
 # moves the window in a circular motion 5 times with 5ms interval and 30px radius
 ```
 
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `count` | `int` | `5` | The number of times the window will move in a circular motion. |
+| `interval` | `int` | `5` | The time in milliseconds in which the window will move in a circular motion. |
+| `radius` | `int` | `20` | The radius of the circular motion. |
+
 ![Circle Motion](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/circle_motion.gif)
 
 *The animation might appear a bit fasterer and rougher in the above preview gif than it is*
@@ -464,6 +607,12 @@ window_animation.vertical_shake(window, count=5, interval=5, amplitude=20)
 # shakes the window vertically 5 times with 5ms interval and 10px distance
 ```
 
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `count` | `int` | `5` | The number of times the window will shake vertically. |
+| `interval` | `int` | `5` | The time in milliseconds in which the window will shake vertically. |
+| `amplitude` | `int` | `20` | The distance the window will shake vertically. |
+
 ### Horizontal Shake
 
 ```python
@@ -471,26 +620,54 @@ window_animation.horizontal_shake(window, count=5, interval=5, amplitude=20)
 # shakes the window horizontally 5 times with 5ms interval and 10px distance
 ```
 
+| Parameter | Type | Default | Description |
+| :-------: | :--: | :-----: | :----------: |
+| `count` | `int` | `5` | The number of times the window will shake horizontally. |
+| `interval` | `int` | `5` | The time in milliseconds in which the window will shake horizontally. |
+| `amplitude` | `int` | `20` | The distance the window will shake horizontally. |
+
 ## ✏️ Stylize text
 
 ```python
 title_text.stylize(window, style=1)
 ```
 
+**Choose any style from 1 to 10.**
+
 *Below is a gif demonstrating all of the available styles*
 
 ![Stylize Text](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/stylize_text.gif)
 
+> [!NOTE]
+> *It is recommended to use the `title_text.set` function to change the title of the window instead of directly setting the title of the window.*
+> 
+> *This is because the `title_text.set` function also caches the original title and the styled title so that it can be used to verify the consistency of the title before applying the style.*
+
+## Workaround for other libraries
+
+This menthod is applicable for any other UI library like <kbd>pygame</kbd> <kbd>pySimpleGUI</kbd>, etc. which are not mentioned in the [supported libraries list](#-supported-libraries). You just need to pass the `hwnd` of the window instead of the `window object` to the functions as demonstrated below.
+
+```python
+import tkinter as tk
+from hPyT import *
+import ctypes
+
+# make sure that the window has been created and is active
+
+hwnd = ctypes.windll.user32.GetActiveWindow()
+rainbow_border.start(hwnd, interval=4) # use the hwnd of the window instead of the window object
+```
+
 ## Miscellaneous
 
-## Get Windows Accent Color
+### Get Windows Accent Color
 
 ```python
 print(get_accent_color()) # prints the current windows accent color
 >>> '#1b595a'
 ```
 
-## Stylize text
+### Stylize text
 
 ```python
 print(stylize_text("Your Custom Text", style=1)) # stylizes your text
@@ -498,21 +675,13 @@ print(stylize_text("Your Custom Text", style=1)) # stylizes your text
 >>> "𝔜𝔬𝔲𝔯 ℭ𝔲𝔰𝔱𝔬𝔪 𝔗𝔢𝔵𝔱"
 ```
 
-## Workaround for other libraries
-
-This menthod is applicable for any other UI library like <kbd>pygame</kbd> <kbd>pySimpleGUI</kbd>, etc. which are not mentioned in the [supported libraries list](#-supported-libraries). You just need to pass the `hwnd` of the window to the functions as demonstrated below.
-
-```python
-from hPyT import *
-import ctypes
-
-hwnd = ctypes.windll.user32.GetActiveWindow()
-rainbow_border.start(hwnd)
-```
-
 <br>
 
 ## 📜 hPyT Changelog
+
+### v1.4.0
+
+- 
 
 ### v1.3.7
 
@@ -601,7 +770,9 @@ rainbow_border.start(hwnd)
 ---
 
 <h6 align="center">
-© zingzy . 2024
+<img src="https://avatars.githubusercontent.com/u/90309290?v=4" height=30 title="zingzy Copyright">
+<br>
+© zingzy . 2025
 
 All Rights Reserved</h6>
 
