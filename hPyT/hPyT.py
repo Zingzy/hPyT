@@ -2,7 +2,7 @@ import ctypes.wintypes
 import math
 import threading
 import time
-from typing import Any, Tuple, Union, List, Dict
+from typing import Any, Tuple, Union, Optional, List, Dict
 import platform
 
 try:
@@ -95,7 +95,6 @@ rnbtbs: List[int] = []
 rnbbcs: List[int] = []
 accent_color_titlebars: List[int] = []
 accent_color_borders: List[int] = []
-titles: dict = {}
 
 WINDOWS_VERSION = float(platform.version().split(".")[0])
 
@@ -1405,6 +1404,11 @@ class window_dwm:
 class title_text:
     """Play with the title of a window."""
 
+    # Track both original and styled titles
+    _title_cache: Dict[
+        int, Tuple[str, str, Optional[int]]
+    ] = {}  # {hwnd: (original_title, styled_title, current_style)}
+
     @classmethod
     def set(cls, window: Any, title: str) -> None:
         """
@@ -1416,6 +1420,27 @@ class title_text:
         """
 
         hwnd: int = module_find(window)
+        # If there's a cached style, verify current title and apply style to the new title
+        if hwnd in cls._title_cache:
+            cached_original, cached_styled, current_style = cls._title_cache[hwnd]
+
+            # Get current window title to verify cache consistency
+            buffer_size = 1024
+            buffer = ctypes.create_unicode_buffer(buffer_size)
+            ctypes.windll.user32.GetWindowTextW(hwnd, buffer, buffer_size)
+            current_title = buffer.value
+
+            # Only apply cached style if current title matches our cache
+            if current_style is not None and current_title == cached_styled:
+                styled_title = stylize_text(title, current_style)
+                cls._title_cache[hwnd] = (title, styled_title, current_style)
+                ctypes.windll.user32.SetWindowTextW(hwnd, styled_title)
+                return
+
+            # If cache is invalid, clear it
+            del cls._title_cache[hwnd]
+
+        # Otherwise just set the new title
         ctypes.windll.user32.SetWindowTextW(hwnd, title)
 
     @classmethod
@@ -1429,15 +1454,25 @@ class title_text:
         """
 
         hwnd: int = module_find(window)
-        if hwnd not in titles:
-            title = ctypes.create_unicode_buffer(1024)
-            ctypes.windll.user32.GetWindowTextW(hwnd, title, 1024)
-            titles[hwnd] = title.value
-        stylized_title = stylize_text(titles[hwnd], style)
-        title = ctypes.create_unicode_buffer(
-            stylized_title, size=len(stylized_title.encode("unicode_escape"))
-        )
-        ctypes.windll.user32.SetWindowTextW(hwnd, title)
+
+        # Get current window title
+        current_title_buffer = ctypes.create_unicode_buffer(1024)
+        ctypes.windll.user32.GetWindowTextW(hwnd, current_title_buffer, 1024)
+        current_title = current_title_buffer.value
+
+        # If no style applied yet or title has changed, update cache
+        if hwnd not in cls._title_cache or cls._title_cache[hwnd][1] != current_title:
+            cls._title_cache[hwnd] = (current_title, current_title, None)
+
+        # Only restyle if style has changed
+        if cls._title_cache[hwnd][2] != style:
+            stylized_title = stylize_text(cls._title_cache[hwnd][0], style)
+            stylized_title_buffer = ctypes.create_unicode_buffer(
+                stylized_title, size=len(stylized_title.encode("unicode_escape"))
+            )
+            ctypes.windll.user32.SetWindowTextW(hwnd, stylized_title_buffer)
+            # Update cache with new styled title and style
+            cls._title_cache[hwnd] = (cls._title_cache[hwnd][0], stylized_title, style)
 
     @classmethod
     def reset(cls, window: Any) -> None:
@@ -1449,9 +1484,10 @@ class title_text:
         """
 
         hwnd: int = module_find(window)
-        if hwnd in titles:
-            ctypes.windll.user32.SetWindowTextW(hwnd, titles[hwnd])
-            del titles[hwnd]
+        if hwnd in cls._title_cache:
+            # Restore original title
+            ctypes.windll.user32.SetWindowTextW(hwnd, cls._title_cache[hwnd][0])
+            del cls._title_cache[hwnd]
 
 
 def stylize_text(text: str, style: int) -> str:
