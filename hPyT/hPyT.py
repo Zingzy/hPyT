@@ -1313,7 +1313,7 @@ class window_dwm:
     """Control DWM (Desktop Window Manager) specific features."""
 
     @classmethod
-    def toggle_dwm_animations(cls, window: Any, enabled: bool = True) -> None:
+    def toggle_dwm_transitions(cls, window: Any, enabled: bool = True) -> None:
         """
         Toggle DWM transitions/animations for a window.
         This affects built-in Windows animations like minimize/maximize,
@@ -1325,10 +1325,10 @@ class window_dwm:
 
         Example:
             # Disable DWM animations
-            >>> window_dwm.toggle_dwm_animations(window, False)
+            >>> window_dwm.toggle_dwm_transitions(window, False)
 
             # Re-enable DWM animations
-            >>> window_dwm.toggle_dwm_animations(window, True)
+            >>> window_dwm.toggle_dwm_transitions(window, True)
         """
         hwnd: int = module_find(window)
 
