@@ -3,7 +3,7 @@
 A package to manipulate windows and titlebar of GUI applications made using python
 **Supports Windows 7-11**
 
-https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/hPyT-preview-app.mp4
+https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117df3
 
 **You can download the above hPyT-preview-app from [github releases](https://github.com/Zingzy/hPyT-preview-app/releases/latest/) to test out the package before using it in your projects**
 
@@ -658,6 +658,8 @@ hwnd = ctypes.windll.user32.GetActiveWindow()
 rainbow_border.start(hwnd, interval=4) # use the hwnd of the window instead of the window object
 ```
 
+[Back to top](#-installing)
+
 ## Miscellaneous
 
 ### Get Windows Accent Color
@@ -681,7 +683,11 @@ print(stylize_text("Your Custom Text", style=1)) # stylizes your text
 
 ### v1.4.0
 
-- 
+- Add new feature for customizing the corner radius of the window
+- Add new feature for manipulating the non-client area of the window
+- Fix the issue with stylize text not looking for changes made by the user
+- Fix the issue with title text not being consistent on older versions of windows
+- Add support for x86/x32 pythonarchitecture
 
 ### v1.3.7
 
