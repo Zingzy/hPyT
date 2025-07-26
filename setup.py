@@ -28,6 +28,9 @@ setup(
         "Programming Language :: Python :: 3.12",
         "Operating System :: Microsoft :: Windows",
     ],
+    package_data={
+        "hPyT": ["assets/*"]
+    },
     keywords="Tkinter wxpython pyqt pyside GUI window controls decorations hide show titlebar border color animation",
     python_requires=">=3.6",
     project_urls={
