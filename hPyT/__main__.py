@@ -1,24 +1,46 @@
-from customtkinter import (
-    CTk,
-    CTkImage,
-    CTkFrame,
-    CTkLabel,
-    CTkButton,
-    CTkSlider,
-    CTkOptionMenu,
-    CTkToplevel,
-    CTkScrollableFrame,
-)
-import customtkinter
 from tkinter import StringVar
 from dataclasses import dataclass
 from typing import Dict
-import pyperclip
 from webbrowser import open
-from PIL import Image
 import os.path
 from os import chdir
+import subprocess
 import sys
+
+try:
+    from customtkinter import (
+        CTk,
+        CTkImage,
+        CTkFrame,
+        CTkLabel,
+        CTkButton,
+        CTkSlider,
+        CTkOptionMenu,
+        CTkToplevel,
+        CTkScrollableFrame,
+    )
+
+    import customtkinter
+    from win32mica import ApplyMica, MicaStyle, MicaTheme
+    from PIL import Image
+except ModuleNotFoundError:
+    print("The hPyT Preview program needs the following additional dependencies to be installed for working:\n")
+    print("- customtkinter")
+    print("- win32mica")
+    print("- Pillow")
+
+    install_modules_permission = input("\nWould you like to install them? (Y/N): ")
+
+    if install_modules_permission.lower() == "y":
+        print("\n")
+        subprocess.call(f"\"{sys.executable}\" -m pip install customtkinter win32mica Pillow", shell=True)
+
+        print("\nRelaunching the preview program...\n")
+        subprocess.call(f"\"{sys.executable}\" \"{__file__}\"", shell=True)
+        sys.exit(0)
+    else:
+        sys.exit(0)
+
 from hPyT import (
     title_bar_color,
     window_animation,
@@ -36,7 +58,7 @@ from hPyT import (
 )
 
 # Change the current directory to the one where the demo program is
-# This fixes "No such file or directory" exceptions
+# This fixes FileNotFoundError exceptions
 chdir(os.path.dirname(__file__))
 
 customtkinter.set_appearance_mode("Dark")
@@ -78,17 +100,17 @@ class ImageManager:
 
     def _load_images(self):
         image_configs = {
-            "hide": ("app-assets/hide.png", (15, 15)),
-            "unhide": ("app-assets/unhide.png", (15, 15)),
-            "github": ("app-assets/github.png", (15, 15)),
-            "pypi": ("app-assets/pypi.png", (15, 15)),
-            "rocket": ("app-assets/Rocket.png", (15, 15)),
-            "enable": ("app-assets/enable.png", (15, 15)),
-            "disable": ("app-assets/disable.png", (15, 15)),
-            "play": ("app-assets/play.png", (15, 15)),
-            "pause": ("app-assets/pause.png", (15, 15)),
-            "history": ("app-assets/history.png", (20, 20)),
-            "cross": ("app-assets/cross.png", (20, 20)),
+            "hide": ("assets/hide.png", (15, 15)),
+            "unhide": ("assets/unhide.png", (15, 15)),
+            "github": ("assets/github.png", (15, 15)),
+            "pypi": ("assets/pypi.png", (15, 15)),
+            "rocket": ("assets/Rocket.png", (15, 15)),
+            "enable": ("assets/enable.png", (15, 15)),
+            "disable": ("assets/disable.png", (15, 15)),
+            "play": ("assets/play.png", (15, 15)),
+            "pause": ("assets/pause.png", (15, 15)),
+            "history": ("assets/history.png", (20, 20)),
+            "cross": ("assets/cross.png", (20, 20)),
         }
 
         for name, (path, size) in image_configs.items():
@@ -132,7 +154,9 @@ class CodeCopyButton(BaseComponent):
         )
 
     def _copy_code(self):
-        pyperclip.copy(self.code)
+        self.button.winfo_toplevel().clipboard_clear()
+        self.button.winfo_toplevel().clipboard_append(self.code)
+        
         self.button.configure(text="Copied !")
         self.parent.after(1000, lambda: self.button.configure(text=self.button_text))
 
@@ -852,8 +876,6 @@ class ThemeManager:
 
     def _setup_theme(self):
         try:
-            from win32mica import ApplyMica, MicaStyle, MicaTheme
-
             ApplyMica(
                 HWND=self.window.frame(), Theme=MicaTheme.DARK, Style=MicaStyle.ALT
             )
@@ -1028,7 +1050,7 @@ class HPyTPreview:
 
     def setup_window(self):
         self.window.title("hPyT - Preview")
-        self.window.iconbitmap(ResourceManager.get_path("app-assets/icon.ico"))
+        self.window.iconbitmap(ResourceManager.get_path("assets/icon.ico"))
         self.window.configure(fg_color=self.theme.primary_color)
 
     def create_ui(self):
