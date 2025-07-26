@@ -17,6 +17,7 @@ import pyperclip
 from webbrowser import open
 from PIL import Image
 import os.path
+from os import chdir
 import sys
 from hPyT import (
     title_bar_color,
@@ -33,6 +34,10 @@ from hPyT import (
     window_dwm,
     corner_radius,
 )
+
+# Change the current directory to the one where the demo program is
+# This fixes "No such file or directory" exceptions
+chdir(os.path.dirname(__file__))
 
 customtkinter.set_appearance_mode("Dark")
 IS_WINDOWS_11: bool = sys.getwindowsversion().build >= 22000
