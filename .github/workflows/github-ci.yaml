@@ -47,4 +47,4 @@ jobs:
 
     - name: Test with Mypy
       run: |
-        mypy hPyT
+        mypy hPyT --follow-untyped-imports
