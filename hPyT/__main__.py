@@ -1004,23 +1004,9 @@ class ReleaseHistoryFeature:
         top.configure(fg_color=self.theme.primary_color)
         top.withdraw()
 
-        title_bar.hide(top, no_span=True)
-
         def on_close():
             self.window.wm_attributes("-disabled", False)
             top.destroy()
-
-        close_button = CTkButton(
-            top,
-            text="",
-            image=self.images.get("cross"),
-            command=on_close,
-            fg_color=self.theme.primary_color,
-            hover=None,
-            font=("Segoe UI", 20),
-            width=20,
-        )
-        close_button.pack(padx=3, pady=10, anchor="ne")
 
         CTkLabel(top, text="hPyT Release History", font=("Segoe UI", 25, "bold")).pack(
             pady=10
@@ -1058,7 +1044,6 @@ class ReleaseHistoryFeature:
                 ApplyMica(HWND=top.frame(), Theme=MicaTheme.DARK, Style=MicaStyle.ALT)
         except Exception:
             top.configure(fg_color=self.theme.fallback_bg_color)
-            close_button.configure(fg_color=self.theme.fallback_bg_color)
             main_frame.configure(fg_color=self.theme.fallback_bg_color)
 
         top.bind("<Escape>", lambda event: on_close())
@@ -1066,6 +1051,7 @@ class ReleaseHistoryFeature:
         window_frame.center_relative(self.window, top)
         top.deiconify()
         top.focus_set()
+        top.iconbitmap("assets/transparent.ico")
 
 
 class HPyTPreview:
