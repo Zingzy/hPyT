@@ -128,7 +128,6 @@ class ImageManager:
             "play": ("assets/play.png", (15, 15)),
             "pause": ("assets/pause.png", (15, 15)),
             "history": ("assets/history.png", (20, 20)),
-            "cross": ("assets/cross.png", (20, 20)),
         }
 
         for name, (path, size) in image_configs.items():
