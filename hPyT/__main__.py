@@ -1,7 +1,7 @@
 from tkinter import StringVar
 from dataclasses import dataclass
 from typing import Dict
-from webbrowser import open
+from webbrowser import open as open_link
 import os.path
 from os import chdir
 import subprocess
@@ -55,11 +55,22 @@ from hPyT import (
     title_text,
     window_dwm,
     corner_radius,
+    get_accent_color,
 )
 
 # Change the current directory to the one where the demo program is
 # This fixes FileNotFoundError exceptions
 chdir(os.path.dirname(__file__))
+
+try:
+    accent_color = get_accent_color()
+    theme_accent = open("assets/theme.json", "r").read().replace("#616107", accent_color)
+    open("assets/theme_accent.json", "w").write(theme_accent)
+
+    customtkinter.set_default_color_theme("assets/theme_accent.json")
+except Exception as e:
+    print(e)
+    customtkinter.set_default_color_theme("assets/theme.json")
 
 customtkinter.set_appearance_mode("Dark")
 IS_WINDOWS_11: bool = sys.getwindowsversion().build >= 22000
@@ -581,7 +592,7 @@ class LinksFeature(FeatureFrame):
         github_button = CTkButton(
             self.frame,
             text="  GitHub",
-            command=lambda: open("https://github.com/zingzy/hPyT"),
+            command=lambda: open_link("https://github.com/zingzy/hPyT"),
             fg_color=self.theme.button_color,
             hover_color=self.theme.button_hover_color,
             font=("Segoe UI", 13),
@@ -593,7 +604,7 @@ class LinksFeature(FeatureFrame):
         pypi_button = CTkButton(
             self.frame,
             text="    PyPI",
-            command=lambda: open("https://pypi.org/project/hPyT/"),
+            command=lambda: open_link("https://pypi.org/project/hPyT/"),
             fg_color=self.theme.button_color,
             hover_color=self.theme.button_hover_color,
             font=("Segoe UI", 13),
@@ -1101,8 +1112,8 @@ class HPyTPreview:
 
         CTkLabel(
             top_frame,
-            text="A Python package to manipulate window titlebar in GUI applications",
-            wraplength=500,
+            text="A package for manipulating windows and titlebar of GUI applications made using Python.",
+            wraplength=700,
             font=("Segoe UI", 13),
             justify="center",
             fg_color=self.theme.primary_color,

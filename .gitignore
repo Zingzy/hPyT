@@ -172,3 +172,6 @@ cython_debug/
 
 # ruff
 .ruff_cache/
+
+# Generated theme with the system's accent color
+hPyT/assets/theme_accent.json
