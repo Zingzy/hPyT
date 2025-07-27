@@ -1050,7 +1050,7 @@ class ReleaseHistoryFeature:
             close_button.configure(fg_color=self.theme.fallback_bg_color)
             main_frame.configure(fg_color=self.theme.fallback_bg_color)
 
-        top.bind("<Escape>", on_close)
+        top.bind("<Escape>", lambda event: on_close())
         top.protocol("WM_DELETE_WINDOW", on_close)
         window_frame.center_relative(self.window, top)
         top.deiconify()
