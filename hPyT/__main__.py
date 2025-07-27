@@ -1066,6 +1066,7 @@ class HPyTPreview:
             self.window, self.theme, self.image_manager
         )
 
+        self.window.withdraw()
         self.setup_window()
         self.create_ui()
 
@@ -1194,6 +1195,7 @@ class HPyTPreview:
 
     def run(self):
         window_frame.center(self.window)
+        self.window.deiconify()
         self.window.mainloop()
 
 
