@@ -733,6 +733,9 @@ class CornerRadiusFeature(FeatureFrame):
         )
         self.radius_menu.pack(padx=10, pady=(5, 10), side="bottom")
 
+        if not IS_WINDOWS_11:
+            self.radius_menu.configure(state="disabled")
+
         self.copy_button = CodeCopyButton(
             self.frame,
             self.theme,
@@ -1098,7 +1101,7 @@ class HPyTPreview:
 
         CTkLabel(
             top_frame,
-            text="A python package to manipulate window titlebar in GUI applications",
+            text="A Python package to manipulate window titlebar in GUI applications",
             wraplength=500,
             font=("Segoe UI", 13),
             justify="center",
