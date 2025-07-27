@@ -69,10 +69,17 @@ IS_WINDOWS_11: bool = sys.getwindowsversion().build >= 22000
 class ThemeConfig:
     """Configuration for app theming"""
 
-    primary_color: str = "black"
-    secondary_color: str = "grey6"
-    button_color: str = "grey13"
-    button_hover_color: str = "grey16"
+    if IS_WINDOWS_11:
+        primary_color: str = "black"
+        secondary_color: str = "grey6"
+        button_color: str = "grey13"
+        button_hover_color: str = "grey16"
+    else:
+        primary_color: str = "#202020"
+        secondary_color: str = "#2F2F2F"
+        button_color: str = "#414141"
+        button_hover_color: str = "#494949"
+
     fallback_bg_color: str = "#202020"
     fallback_frame_color: str = "#2F2F2F"
     fallback_button_color: str = "#414141"
@@ -876,13 +883,21 @@ class ThemeManager:
 
     def _setup_theme(self):
         try:
-            ApplyMica(
-                HWND=self.window.frame(), Theme=MicaTheme.DARK, Style=MicaStyle.ALT
-            )
+            if IS_WINDOWS_11:
+                ApplyMica(
+                    HWND=self.window.frame(), Theme=MicaTheme.DARK, Style=MicaStyle.ALT
+                )
+            else:
+                self._apply_fallback_theme()
         except Exception:
             self._apply_fallback_theme()
 
     def _apply_fallback_theme(self):
+        ThemeConfig.primary_color = "#202020"
+        ThemeConfig.secondary_color = "#2F2F2F"
+        ThemeConfig.button_color = "#414141"
+        ThemeConfig.button_hover_color = "#494949"
+
         self.window.configure(fg_color=self.theme.fallback_bg_color)
 
 
@@ -1021,9 +1036,8 @@ class ReleaseHistoryFeature:
                 ).pack(pady=2, anchor="w", padx=5)
 
         try:
-            from win32mica import ApplyMica, MicaStyle, MicaTheme
-
-            ApplyMica(HWND=top.frame(), Theme=MicaTheme.DARK, Style=MicaStyle.ALT)
+            if IS_WINDOWS_11:
+                ApplyMica(HWND=top.frame(), Theme=MicaTheme.DARK, Style=MicaStyle.ALT)
         except Exception:
             top.configure(fg_color=self.theme.fallback_bg_color)
             close_button.configure(fg_color=self.theme.fallback_bg_color)
