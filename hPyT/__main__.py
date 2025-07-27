@@ -984,19 +984,23 @@ class ReleaseHistoryFeature:
         """Shows the release history popup"""
         top = CTkToplevel(self.window)
         top.geometry("500x500")
-        window_frame.center_relative(self.window, top)
         top.title("")
-        top.grab_set_global()
+        top.transient(self.window)
+        self.window.wm_attributes("-disabled", True)
         top.configure(fg_color=self.theme.primary_color)
-        top.iconify()
+        top.withdraw()
 
         title_bar.hide(top, no_span=True)
+
+        def on_close():
+            self.window.wm_attributes("-disabled", False)
+            top.destroy()
 
         close_button = CTkButton(
             top,
             text="",
             image=self.images.get("cross"),
-            command=lambda: [top.grab_release(), top.destroy()],
+            command=on_close,
             fg_color=self.theme.primary_color,
             hover=None,
             font=("Segoe UI", 20),
@@ -1043,8 +1047,11 @@ class ReleaseHistoryFeature:
             close_button.configure(fg_color=self.theme.fallback_bg_color)
             main_frame.configure(fg_color=self.theme.fallback_bg_color)
 
-        top.bind("<Escape>", lambda e: [top.grab_release(), top.destroy()])
+        top.bind("<Escape>", on_close)
+        top.protocol("WM_DELETE_WINDOW", on_close)
+        window_frame.center_relative(self.window, top)
         top.deiconify()
+        top.focus_set()
 
 
 class HPyTPreview:
