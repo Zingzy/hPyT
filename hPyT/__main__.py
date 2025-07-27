@@ -24,7 +24,9 @@ try:
     from win32mica import ApplyMica, MicaStyle, MicaTheme
     from PIL import Image
 except ModuleNotFoundError:
-    print("The hPyT Preview program needs the following additional dependencies to be installed for working:\n")
+    print(
+        "The hPyT Preview program needs the following additional dependencies to be installed for working:\n"
+    )
     print("- customtkinter")
     print("- win32mica")
     print("- Pillow")
@@ -33,10 +35,13 @@ except ModuleNotFoundError:
 
     if install_modules_permission.lower() == "y":
         print("\n")
-        subprocess.call(f"\"{sys.executable}\" -m pip install customtkinter win32mica Pillow", shell=True)
+        subprocess.call(
+            f'"{sys.executable}" -m pip install customtkinter win32mica Pillow',
+            shell=True,
+        )
 
         print("\nRelaunching the preview program...\n")
-        subprocess.call(f"\"{sys.executable}\" \"{__file__}\"", shell=True)
+        subprocess.call(f'"{sys.executable}" "{__file__}"', shell=True)
         sys.exit(0)
     else:
         sys.exit(0)
@@ -64,7 +69,9 @@ chdir(os.path.dirname(__file__))
 
 try:
     accent_color = get_accent_color()
-    theme_accent = open("assets/theme.json", "r").read().replace("#616107", accent_color)
+    theme_accent = (
+        open("assets/theme.json", "r").read().replace("#616107", accent_color)
+    )
     open("assets/theme_accent.json", "w").write(theme_accent)
 
     customtkinter.set_default_color_theme("assets/theme_accent.json")
@@ -173,7 +180,7 @@ class CodeCopyButton(BaseComponent):
     def _copy_code(self):
         self.button.winfo_toplevel().clipboard_clear()
         self.button.winfo_toplevel().clipboard_append(self.code)
-        
+
         self.button.configure(text="Copied !")
         self.parent.after(1000, lambda: self.button.configure(text=self.button_text))
 
@@ -611,18 +618,6 @@ class LinksFeature(FeatureFrame):
             compound="right",
         )
         pypi_button.pack(padx=10, pady=5, side="bottom")
-
-        quick_install_button = CTkButton(
-            self.frame,
-            text="Quick Install",
-            command=lambda: os.system("pip install hPyT"),
-            fg_color=self.theme.button_color,
-            hover_color=self.theme.button_hover_color,
-            font=("Segoe UI", 13),
-            image=self.images.get("rocket"),
-            compound="right",
-        )
-        quick_install_button.pack(padx=10, pady=(15, 5), side="bottom")
 
 
 class AllStuffsFeature(FeatureFrame):

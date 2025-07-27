@@ -508,7 +508,7 @@ window_dwm.toggle_cloak(window, enabled=False) # shows the window
 > [!TIP]
 > By cloaking a window, `DWM` can optimize the **rendering process** since it doesn't have to display the window's content on the screen. This can help **improve the performance** of applications, especially those with complex UI elements or animations.
 
-#### Example of window rendering with and without cloacking
+#### Example of window rendering with and without cloaking
 
 <div align="center">
 
