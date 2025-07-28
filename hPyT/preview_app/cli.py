@@ -381,16 +381,6 @@ class OpacityFeature(FeatureFrame):
         self._setup_controls()
 
     def _setup_controls(self):
-        opacity_warning = CTkLabel(
-            self.frame,
-            text="Press Ctrl+Shift+R to reset the opacity if you can't see the window",
-            wraplength=150,
-            font=("Segoe UI", 12, "bold"),
-            justify="center",
-            text_color="#FF5050",
-        )
-        opacity_warning.pack(padx=10, pady=(10, 0))
-
         slider_frame = CTkFrame(self.frame, fg_color=self.theme.button_color)
         slider_frame.pack(padx=10, pady=10, side="bottom")
 
@@ -411,11 +401,6 @@ class OpacityFeature(FeatureFrame):
         self.opacity_slider.pack(padx=10, pady=(5, 5), side="bottom")
         self.opacity_slider.set(1)
 
-        self.window.bind(
-            "<Control-Shift-R>",
-            lambda event: [self.opacity_slider.set(1), opacity.set(self.window, 1.0)],
-        )
-
         self.copy_button = CodeCopyButton(
             self.frame,
             self.theme,
@@ -424,7 +409,8 @@ class OpacityFeature(FeatureFrame):
         self.copy_button.pack(padx=10, pady=(5, 0), side="bottom")
 
     def _on_opacity_change(self, value):
-        opacity.set(self.window, value)
+        if not value == 0:
+            opacity.set(self.window, value)
 
 
 class WindowFlashFeature(FeatureFrame):
