@@ -1,11 +1,8 @@
 # hPyT - Hack Python Titlebar
 
-A package to manipulate windows and titlebar of GUI applications made using python
-**Supports Windows 7-11**
+A package for manipulating windows and titlebar of GUI applications made using Python. Supports Windows 7, 8.x, 10, and 11.
 
 https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117df3
-
-**You can download the above hPyT-preview-app from [github releases](https://github.com/Zingzy/hPyT-preview-app/releases/latest/) to test out the package before using it in your projects**
 
 <br>
 
@@ -16,6 +13,7 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 - [hPyT - Hack Python Titlebar](#hpyt---hack-python-titlebar)
 	- [📚 Supported Libraries](#-supported-libraries)
 	- [📦 Installing](#-installing)
+	- [🧩 Running the preview app](#-running-the-preview-app)
 	- [📥 Importing](#-importing)
 	- [NEW Features in `v1.4.0` 🎉](#new-features-in-v140-)
 	- [Hide/Unhide TitleBar](#hideunhide-titlebar)
@@ -34,10 +32,10 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 	- [Enable/Disable Maximize Button](#enabledisable-maximize-button)
 	- [Enable/Disable Minimize Button](#enabledisable-minimize-button)
 	- [🎨 Custom TitleBar Color](#-custom-titlebar-color)
-		- [Set TitleBar Color to windows Accent Color](#set-titlebar-color-to-windows-accent-color)
+		- [Set TitleBar Color to Windows Accent Color](#set-titlebar-color-to-windows-accent-color)
 	- [🖌️ Custom TitleBar Text Color](#️-custom-titlebar-text-color)
 	- [🖌️ Custom Border Color](#️-custom-border-color)
-		- [Set Border Color to windows Accent Color](#set-border-color-to-windows-accent-color)
+		- [Set Border Color to Windows Accent Color](#set-border-color-to-windows-accent-color)
 	- [Window Corner Radius](#window-corner-radius)
 	- [Window DWM Manipulation](#window-dwm-manipulation)
 		- [Enable RTL Layout for the DWM Window](#enable-rtl-layout-for-the-dwm-window)
@@ -89,13 +87,33 @@ https://github.com/Zingzy/hPyT/assets/90309290/f86df1c7-b75b-4477-974a-eb34cc117
 - Almost all other UI libraries
   
 > [!IMPORTANT]
-> follow this [section](#workaround-for-other-libraries) to see how to use hPyT with other libraries
+> Follow [this section](#workaround-for-other-libraries) to see how to use hPyT with other libraries.
 
 ## 📦 Installing
 
 ```powershell
 pip install hPyT==1.4.0
 ```
+
+## 🧩 Running the preview app
+
+After installing the module, you can run the following command to open the preview/demo app:
+
+```powershell
+python -m hPyT
+```
+
+...or try this even simpler command (if it doesn't work, check if your Python installation's `Scripts` folder exists in your `PATH` environment variable):
+
+```powershell
+hPyT-preview
+```
+
+It looks like this:
+
+![Preview app screenshot](preview_app_screenshot.png)
+
+This app allows you to play with hPyT's features and see them in action.
 
 ## 📥 Importing
 
@@ -138,8 +156,8 @@ When hiding a title bar, the application window's total geometry and its content
 1. **Full Window Dimensions**:
    - Includes the content area, title bar, and borders.
    - When the user specifies dimensions (e.g., `400x400`), it usually represents the **content area dimensions**. The total window height becomes `content height + title bar height + border width`.
-   - The color of the `top border` and `title bar` is usually the same in **windows 11 & 10**, making it appear as a single entity. So when hiding the title bar, we also need to hide the top border.
-   - However, in **windows 7 & 8**, the top border is a different color from the title bar, so we don't need to hide the top border when hiding the title bar. Moreover removing the top border will make the window behave abnormally in these versions.
+   - The color of the `top border` and `title bar` is usually the same in **Windows 11 & 10**, making it appear as a single entity. So when hiding the title bar, we also need to hide the top border.
+   - However, in **Windows 7 & 8**, the top border is a different color from the title bar, so we don't need to hide the top border when hiding the title bar. Moreover removing the top border will make the window behave abnormally in these versions.
 
 2. **Content Area Dimensions**:
    - Represents only the usable area inside the window, excluding the title bar and borders.
@@ -330,7 +348,7 @@ all_stuffs.hide(window) # hides close button
 ![Hide Everything](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/all_stuffs.png)
 
 > [!TIP]
-> **To hide the text set the window title to `''`**
+> To hide the text, set the window title to `''`.
 
 ## Enable/Disable Maximize Button
 
@@ -366,16 +384,16 @@ title_bar_color.set(window, color='#ff00ff') # sets the titlebar color to magent
 
 ![Custom TitleBar Color](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/titlebar_color.png)
 
-### Set TitleBar Color to windows Accent Color
+### Set TitleBar Color to Windows Accent Color
 
 ```python
-title_bar_color.set_accent(window) # sets the titlebar color to the current windows accent color
+title_bar_color.set_accent(window) # sets the titlebar color to the current Windows accent color
 ```
 
 ![Accent TitleBar](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/accent_titlebar.png)
 
 > [!NOTE]
-> *The titlebar color will automatically change when the windows accent color changes*
+> The titlebar color will automatically change when the Windows accent color changes
 
 ## 🖌️ Custom TitleBar Text Color
 
@@ -407,16 +425,16 @@ border_color.set(window, color='#ff00ff') # sets the border color to magenta
 
 ![Custom Border Color](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/border_color.png)
 
-### Set Border Color to windows Accent Color
+### Set Border Color to Windows Accent Color
 
 ```python
-border_color.set_accent(window) # sets the border color to the current windows accent color
+border_color.set_accent(window) # sets the border color to the current Windows accent color
 ```
 
 ![Accent Border](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/accent_border.png)
 
 > [!NOTE]
-> *The border color will automatically change when the windows accent color changes*
+> The border color will automatically change when the Windows accent color changes.
 
 ## Window Corner Radius
 
@@ -439,6 +457,9 @@ corner_radius.set(window, style="round-small") # sets the window border radius t
 
 </div>
 
+> [!WARNING]
+> The `round-small` option removes the window's shadow, unlike the other options.
+
 ## Window DWM Manipulation
 
 `DWM` - **Desktop Window Manager** is the component of a window which controls `non-client area of the window`. The features below are generally used to improve the **accessibility** of a window.
@@ -453,7 +474,7 @@ window_dwm.toggle_rtl_layout(window, enabled=True) # enables RTL layout for the 
 ![RTL Layout](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/dwm_rtl.png)
 
 > [!NOTE]
-> *This feature enables the **RTL layout** for the **non-client area** of the window which includes the **titlebar**, **border**, etc.*
+> This feature enables the **RTL layout** for the **non-client area** of the window which includes the **titlebar**, **border**, etc.
 
 ### Disable DWM Transitions for the DWM Window
 
@@ -473,10 +494,10 @@ window_dwm.toggle_dwm_transitions(window, enabled=False) # disables DWM transiti
 </div>
 
 > [!NOTE]
-> *This will only affect the minimize, maximize, restore, etc. animations. It will not affect custom animations.*
+> This will only affect the minimize, maximize, restore, etc. animations. It will not affect custom animations.
 
 > [!IMPORTANT]
-> *This feature won't work if the global animations are disabled by the user in the windows settings.*
+> This feature won't work if the global animations are disabled by the user in the Windows settings.
 
 ### Window Cloaking
 
@@ -491,9 +512,9 @@ window_dwm.toggle_cloak(window, enabled=False) # shows the window
 ```
 
 > [!TIP]
-> *By cloaking a window, `DWM` can optimize the **rendering process** since it doesn't have to display the window's content on the screen. This can help **improve the performance** of applications, especially those with complex UI elements or animations.*
+> By cloaking a window, `DWM` can optimize the **rendering process** since it doesn't have to display the window's content on the screen. This can help **improve the performance** of applications, especially those with complex UI elements or animations.
 
-#### Example of window rendering with and without cloacking
+#### Example of window rendering with and without cloaking
 
 <div align="center">
 
@@ -639,9 +660,9 @@ title_text.stylize(window, style=1)
 ![Stylize Text](https://raw.githubusercontent.com/zingzy/hPyT/main/.github/assets/stylize_text.gif)
 
 > [!NOTE]
-> *It is recommended to use the `title_text.set` function to change the title of the window instead of directly setting the title of the window.*
+> It is recommended to use the `title_text.set` function to change the title of the window instead of directly setting the title of the window.
 > 
-> *This is because the `title_text.set` function also caches the original title and the styled title so that it can be used to verify the consistency of the title before applying the style.*
+> This is because the `title_text.set` function also caches the original title and the styled title so that it can be used to verify the consistency of the title before applying the style.
 
 ## Workaround for other libraries
 
@@ -686,12 +707,12 @@ print(stylize_text("Your Custom Text", style=1)) # stylizes your text
 - Add new feature for customizing the corner radius of the window
 - Add new feature for manipulating the non-client area of the window
 - Fix the issue with stylize text not looking for changes made by the user
-- Fix the issue with title text not being consistent on older versions of windows
+- Fix the issue with title text not being consistent on older versions of Windows
 - Add support for x86/x32 pythonarchitecture
 
 ### v1.3.7
 
-- Fix color conversion issue which returned the wrong color when the windows accent color was set to a custom color
+- Fix color conversion issue which returned the wrong color when the Windows accent color was set to a custom color
 - Add handling for WM_NCACTIVATE and WM_NCPAINT messages to improve title bar rendering
 - Add dynamic height adjustment to hide_titlebar method using the no_span parameter
 
@@ -706,8 +727,8 @@ print(stylize_text("Your Custom Text", style=1)) # stylizes your text
 
 ### v1.3.4
 
-- Add method for applying the current windows accent color to the titlebar and border color
-- Add method for getting the current windows accent color
+- Add method for applying the current Windows accent color to the titlebar and border color
+- Add method for getting the current Windows accent color
 - Add type annotations and docstrings to functions for better clarity and autocompletion
 
 ### v1.3.3

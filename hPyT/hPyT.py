@@ -1555,7 +1555,7 @@ def get_accent_color() -> str:
     Helper function to get the system accent color.
 
     Returns:
-        tuple: A tuple containing the RGB color values of the system accent color.
+        tuple: A string containing the HEX color value (#RRGGBB) of the system accent color.
 
     Example:
         >>> get_accent_color()

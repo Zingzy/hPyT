@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 setup(
     name="hPyT",
     version="1.4.0",
-    description="Hack Python Titlebar - A package to manipulate windows and titlebar of GUI applications made using python.",
+    description="Hack Python Titlebar - A package for manipulating windows and titlebar of GUI applications made using Python.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="zingzy",
@@ -28,6 +28,12 @@ setup(
         "Programming Language :: Python :: 3.12",
         "Operating System :: Microsoft :: Windows",
     ],
+    package_data={"hPyT": ["preview_app/*", "preview_app/assets/*"]},
+    entry_points={
+        "console_scripts": [
+            "hPyT-preview=hPyT.preview_app.cli:main",
+        ],
+    },
     keywords="Tkinter wxpython pyqt pyside GUI window controls decorations hide show titlebar border color animation",
     python_requires=">=3.6",
     project_urls={
