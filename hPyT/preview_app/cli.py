@@ -306,6 +306,7 @@ class TitleBarFeature(FeatureFrame):
         if self.toggle_button.cget("text") == "   Hide":
             no_span = self.no_span_var.get().lower() == "true"
             title_bar.hide(self.window, no_span=no_span)
+
             self.toggle_button.configure(
                 text="    Unhide",
                 command=self._toggle_title_bar,
@@ -1014,8 +1015,8 @@ class ReleaseHistoryFeature:
             parent,
             text="",
             image=self.images.get("history"),
-            fg_color="grey6",
-            hover_color="grey16",
+            fg_color=self.theme.button_color,
+            hover_color=self.theme.button_hover_color,
             font=("Segoe UI", 15),
             width=20,
             command=self.show_history,
@@ -1111,9 +1112,8 @@ class HPyTPreview:
         self.main_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.main_frame.update()
 
-        self.window.minsize(
-            width=self.main_frame.winfo_reqwidth(),
-            height=self.main_frame.winfo_reqheight(),
+        self.window.geometry(
+            f"{self.main_frame.winfo_reqwidth()}x{self.main_frame.winfo_reqheight()}"
         )
 
     def _create_top_frame(self):
@@ -1131,8 +1131,8 @@ class HPyTPreview:
             top_frame,
             text="",
             image=self.image_manager.get("github"),
-            fg_color="grey6",
-            hover_color="grey16",
+            fg_color=self.theme.button_color,
+            hover_color=self.theme.button_hover_color,
             font=("Segoe UI", 15),
             width=20,
             command=lambda: open_link("https://github.com/zingzy/hPyT"),
@@ -1144,8 +1144,8 @@ class HPyTPreview:
             top_frame,
             text="",
             image=self.image_manager.get("pypi"),
-            fg_color="grey6",
-            hover_color="grey16",
+            fg_color=self.theme.button_color,
+            hover_color=self.theme.button_hover_color,
             font=("Segoe UI", 15),
             width=20,
             command=lambda: open_link("https://pypi.org/project/hPyT"),
@@ -1226,7 +1226,9 @@ class HPyTPreview:
             row=2, column=1, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
 
-        self.flash_feature = WindowFlashFeature(self.main_frame, self.theme, self.window)
+        self.flash_feature = WindowFlashFeature(
+            self.main_frame, self.theme, self.window
+        )
         self.flash_feature.grid(
             row=2, column=2, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
