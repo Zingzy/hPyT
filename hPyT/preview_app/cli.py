@@ -400,11 +400,20 @@ class OpacityFeature(FeatureFrame):
             number_of_steps=10,
             fg_color=self.theme.button_color,
             width=120,
-            progress_color=("grey5", "grey5"),
+            progress_color=(
+                customtkinter.ThemeManager.theme["CTkButton"]["fg_color"][0],
+                customtkinter.ThemeManager.theme["CTkButton"]["fg_color"][0],
+            ),
             command=self._on_opacity_change,
         )
+
         self.opacity_slider.pack(padx=10, pady=(5, 5), side="bottom")
         self.opacity_slider.set(1)
+
+        self.window.bind(
+            "<Control-Shift-R>",
+            lambda event: [self.opacity_slider.set(1), opacity.set(self.window, 1.0)],
+        )
 
         self.copy_button = CodeCopyButton(
             self.frame,
