@@ -214,7 +214,7 @@ class FeatureFrame(BaseComponent):
             font=("Segoe UI", 13),
             justify="center",
         )
-        self.description_label.pack(padx=10, pady=(10, 30))
+        self.description_label.pack(padx=10, pady=(10, 0))
 
     def grid(self, **kwargs):
         self.frame.grid(**kwargs)
@@ -232,7 +232,7 @@ class TitleBarFeature(FeatureFrame):
     def _setup_controls(self):
         # Create a frame for no_span controls
         no_span_frame = CTkFrame(self.frame, fg_color=self.theme.secondary_color)
-        no_span_frame.pack(padx=5, pady=(20, 0), fill="x")
+        no_span_frame.pack(padx=5, pady=0, fill="x")
 
         CTkLabel(
             no_span_frame,
@@ -380,6 +380,16 @@ class OpacityFeature(FeatureFrame):
         self._setup_controls()
 
     def _setup_controls(self):
+        opacity_warning = CTkLabel(
+            self.frame,
+            text="Press Ctrl+Shift+R to reset the opacity if you can't see the window",
+            wraplength=150,
+            font=("Segoe UI", 12, "bold"),
+            justify="center",
+            text_color="#FF5050",
+        )
+        opacity_warning.pack(padx=10, pady=(10, 0))
+
         slider_frame = CTkFrame(self.frame, fg_color=self.theme.button_color)
         slider_frame.pack(padx=10, pady=10, side="bottom")
 
@@ -422,9 +432,9 @@ class WindowFlashFeature(FeatureFrame):
             wraplength=150,
             font=("Segoe UI", 12, "bold"),
             justify="center",
-            text_color="red",
+            text_color="#FF5050",
         )
-        flash_warning.pack(padx=10, pady=0)
+        flash_warning.pack(padx=10, pady=(25, 0))
 
         self.flash_button = CTkButton(
             self.frame,
