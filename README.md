@@ -103,6 +103,12 @@ After installing the module, you can run the following command to open the previ
 python -m hPyT
 ```
 
+...or try this even simpler command (if it doesn't work, check if your Python installation's `Scripts` folder exists in your `PATH` environment variable):
+
+```powershell
+hPyT-preview
+```
+
 It looks like this:
 
 ![Preview app screenshot](preview_app_screenshot.png)
