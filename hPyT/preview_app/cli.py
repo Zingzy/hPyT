@@ -1098,7 +1098,7 @@ class HPyTPreview:
         self.main_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.main_frame.update()
 
-        self.window.geometry(
+        self.window.wm_geometry(
             f"{self.main_frame.winfo_reqwidth()}x{self.main_frame.winfo_reqheight()}"
         )
 
