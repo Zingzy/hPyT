@@ -1102,12 +1102,22 @@ class HPyTPreview:
         self.window.configure(fg_color=self.theme.primary_color)
 
     def create_ui(self):
+        self.main_frame = CTkFrame(self.window, fg_color=self.theme.primary_color)
+
         self._create_top_frame()
         self._create_feature_frames()
         self._create_info_label()
 
+        self.main_frame.place(relx=0.5, rely=0.5, anchor="center")
+        self.main_frame.update()
+
+        self.window.minsize(
+            width=self.main_frame.winfo_reqwidth(),
+            height=self.main_frame.winfo_reqheight(),
+        )
+
     def _create_top_frame(self):
-        top_frame = CTkFrame(self.window, fg_color=self.theme.primary_color)
+        top_frame = CTkFrame(self.main_frame, fg_color=self.theme.primary_color)
         top_frame.grid(
             row=0, column=0, sticky="nsew", padx=10, pady=(0, 10), columnspan=6
         )
@@ -1160,42 +1170,42 @@ class HPyTPreview:
     def _create_feature_frames(self):
         # Row 1
         self.title_bar_feature = TitleBarFeature(
-            self.window, self.theme, self.window, self.image_manager
+            self.main_frame, self.theme, self.window, self.image_manager
         )
         self.title_bar_feature.grid(
             row=1, column=0, sticky="nsew", padx=(10, 0), pady=(10, 0)
         )
 
         self.rainbow_title_bar_feature = RainbowTitleBarFeature(
-            self.window, self.theme, self.window, self.image_manager
+            self.main_frame, self.theme, self.window, self.image_manager
         )
         self.rainbow_title_bar_feature.grid(
             row=1, column=1, sticky="nsew", padx=(10, 0), pady=(10, 0)
         )
 
         self.rainbow_border_feature = RainbowBorderFeature(
-            self.window, self.theme, self.window, self.image_manager
+            self.main_frame, self.theme, self.window, self.image_manager
         )
         self.rainbow_border_feature.grid(
             row=1, column=2, sticky="nsew", padx=(10, 0), pady=(10, 0)
         )
 
         self.maximize_minimize_feature = MaximizeMinimizeFeature(
-            self.window, self.theme, self.window, self.image_manager
+            self.main_frame, self.theme, self.window, self.image_manager
         )
         self.maximize_minimize_feature.grid(
             row=1, column=3, sticky="nsew", padx=(10, 0), pady=(10, 0)
         )
 
         self.all_stuffs_feature = AllStuffsFeature(
-            self.window, self.theme, self.window, self.image_manager
+            self.main_frame, self.theme, self.window, self.image_manager
         )
         self.all_stuffs_feature.grid(
             row=1, column=4, sticky="nsew", padx=(10, 0), pady=(10, 0)
         )
 
         self.accent_titlebar_feature = AccentTitlebarFeature(
-            self.window, self.theme, self.window, self.image_manager
+            self.main_frame, self.theme, self.window, self.image_manager
         )
         self.accent_titlebar_feature.grid(
             row=1, column=5, sticky="nsew", padx=10, pady=(10, 0)
@@ -1203,38 +1213,38 @@ class HPyTPreview:
 
         # Row 2
         self.relative_center_feature = RelativeCenterFeature(
-            self.window, self.theme, self.window
+            self.main_frame, self.theme, self.window
         )
         self.relative_center_feature.grid(
             row=2, column=0, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
 
         self.corner_radius_feature = CornerRadiusFeature(
-            self.window, self.theme, self.window
+            self.main_frame, self.theme, self.window
         )
         self.corner_radius_feature.grid(
             row=2, column=1, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
 
-        self.flash_feature = WindowFlashFeature(self.window, self.theme, self.window)
+        self.flash_feature = WindowFlashFeature(self.main_frame, self.theme, self.window)
         self.flash_feature.grid(
             row=2, column=2, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
 
-        self.opacity_feature = OpacityFeature(self.window, self.theme, self.window)
+        self.opacity_feature = OpacityFeature(self.main_frame, self.theme, self.window)
         self.opacity_feature.grid(
             row=2, column=3, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
 
         self.transitions_feature = TransitionsFeature(
-            self.window, self.theme, self.window, self.image_manager
+            self.main_frame, self.theme, self.window, self.image_manager
         )
         self.transitions_feature.grid(
             row=2, column=4, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
 
         self.stylized_text_feature = StylizedTextFeature(
-            self.window, self.theme, self.window
+            self.main_frame, self.theme, self.window
         )
         self.stylized_text_feature.grid(
             row=2, column=5, sticky="nsew", padx=10, pady=(10, 5)
@@ -1242,7 +1252,7 @@ class HPyTPreview:
 
     def _create_info_label(self):
         CTkLabel(
-            self.window,
+            self.main_frame,
             text="Check out the documentation for more commands",
             font=("Segoe UI", 13),
             justify="center",
