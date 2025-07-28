@@ -126,14 +126,14 @@ class ImageManager:
         image_configs = {
             "hide": ("assets/hide.png", (15, 15)),
             "unhide": ("assets/unhide.png", (15, 15)),
-            "github": ("assets/github.png", (15, 15)),
-            "pypi": ("assets/pypi.png", (15, 15)),
             "rocket": ("assets/Rocket.png", (15, 15)),
             "enable": ("assets/enable.png", (15, 15)),
             "disable": ("assets/disable.png", (15, 15)),
             "play": ("assets/play.png", (15, 15)),
             "pause": ("assets/pause.png", (15, 15)),
             "history": ("assets/history.png", (20, 20)),
+            "github": ("assets/github.png", (20, 20)),
+            "pypi": ("assets/pypi.png", (20, 20)),
         }
 
         for name, (path, size) in image_configs.items():
@@ -601,42 +601,6 @@ class AnimationsFeature(FeatureFrame):
         self.copy_button.pack(padx=10, pady=5, side="bottom")
 
 
-class LinksFeature(FeatureFrame):
-    """Project links feature"""
-
-    def __init__(self, parent, theme: ThemeConfig, images: ImageManager):
-        super().__init__(
-            parent, theme, "Project Links", "Links to the package and the author"
-        )
-        self.images = images
-        self._setup_controls()
-
-    def _setup_controls(self):
-        github_button = CTkButton(
-            self.frame,
-            text="  GitHub",
-            command=lambda: open_link("https://github.com/zingzy/hPyT"),
-            fg_color=self.theme.button_color,
-            hover_color=self.theme.button_hover_color,
-            font=("Segoe UI", 13),
-            image=self.images.get("github"),
-            compound="right",
-        )
-        github_button.pack(padx=10, pady=(5, 10), side="bottom")
-
-        pypi_button = CTkButton(
-            self.frame,
-            text="    PyPI",
-            command=lambda: open_link("https://pypi.org/project/hPyT/"),
-            fg_color=self.theme.button_color,
-            hover_color=self.theme.button_hover_color,
-            font=("Segoe UI", 13),
-            image=self.images.get("pypi"),
-            compound="right",
-        )
-        pypi_button.pack(padx=10, pady=5, side="bottom")
-
-
 class AllStuffsFeature(FeatureFrame):
     """All stuffs control feature"""
 
@@ -1100,6 +1064,32 @@ class HPyTPreview:
         release_history_button = self.release_history.create_button(top_frame)
         release_history_button.place(x=10, y=10)
 
+        # Add GitHub button
+        github_button = CTkButton(
+            top_frame,
+            text="",
+            image=self.image_manager.get("github"),
+            fg_color="grey6",
+            hover_color="grey16",
+            font=("Segoe UI", 15),
+            width=20,
+            command=lambda: open_link("https://github.com/zingzy/hPyT"),
+        )
+        github_button.place(x=918, y=10)
+
+        # Add PyPI button
+        pypi_button = CTkButton(
+            top_frame,
+            text="",
+            image=self.image_manager.get("pypi"),
+            fg_color="grey6",
+            hover_color="grey16",
+            font=("Segoe UI", 15),
+            width=20,
+            command=lambda: open_link("https://pypi.org/project/hPyT"),
+        )
+        pypi_button.place(x=964, y=10)
+
         CTkLabel(
             top_frame,
             text="hPyT - Hack Python Titlebar Preview",
@@ -1190,9 +1180,6 @@ class HPyTPreview:
         self.stylized_text_feature.grid(
             row=2, column=4, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
-
-        self.links_feature = LinksFeature(self.window, self.theme, self.image_manager)
-        self.links_feature.grid(row=2, column=5, sticky="nsew", padx=10, pady=(10, 5))
 
     def _create_info_label(self):
         CTkLabel(
