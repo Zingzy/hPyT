@@ -862,6 +862,58 @@ class StylizedTextFeature(FeatureFrame):
             title_text.stylize(self.window, int(style.split(" ")[-1]))
 
 
+class TransitionsFeature(FeatureFrame):
+    """Transitions feature"""
+
+    def __init__(self, parent, theme: ThemeConfig, window: CTk, images: ImageManager):
+        super().__init__(
+            parent,
+            theme,
+            "Transitions",
+            "Disable or enable window transitions",
+        )
+        self.window = window
+        self.images = images
+        self._setup_controls()
+
+    def _setup_controls(self):
+        self.toggle_button = CTkButton(
+            self.frame,
+            text="Disable",
+            command=self._toggle_transitions,
+            fg_color=self.theme.button_color,
+            hover_color=self.theme.button_hover_color,
+            font=("Segoe UI", 13),
+            image=self.images.get("disable"),
+            compound="right",
+        )
+        self.toggle_button.pack(padx=10, pady=(5, 10), side="bottom")
+
+        self.copy_button = CodeCopyButton(
+            self.frame,
+            self.theme,
+            self._get_copy_code(),
+        )
+        self.copy_button.pack(padx=10, pady=5, side="bottom")
+
+    def _get_copy_code(self):
+        transitions_enabled = not self.toggle_button.cget("text") == "Enable"
+        return f"""from hPyT import *\n\nwindow_dwm.toggle_dwm_transitions(self.window, enabled={transitions_enabled})"""
+
+    def _toggle_transitions(self):
+        if self.toggle_button.cget("text") == "Enable":
+            window_dwm.toggle_dwm_transitions(self.window, enabled=True)
+            self.toggle_button.configure(
+                text="Disable", image=self.images.get("disable")
+            )
+        else:
+            window_dwm.toggle_dwm_transitions(self.window, enabled=False)
+            self.toggle_button.configure(text="Enable", image=self.images.get("enable"))
+
+        # Update code to copy
+        self.copy_button.code = self._get_copy_code()
+
+
 class ThemeManager:
     """Manages application theming"""
 
@@ -1164,21 +1216,28 @@ class HPyTPreview:
             row=2, column=1, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
 
-        self.opacity_feature = OpacityFeature(self.window, self.theme, self.window)
-        self.opacity_feature.grid(
+        self.flash_feature = WindowFlashFeature(self.window, self.theme, self.window)
+        self.flash_feature.grid(
             row=2, column=2, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
 
-        self.flash_feature = WindowFlashFeature(self.window, self.theme, self.window)
-        self.flash_feature.grid(
+        self.opacity_feature = OpacityFeature(self.window, self.theme, self.window)
+        self.opacity_feature.grid(
             row=2, column=3, sticky="nsew", padx=(10, 0), pady=(10, 5)
+        )
+
+        self.transitions_feature = TransitionsFeature(
+            self.window, self.theme, self.window, self.image_manager
+        )
+        self.transitions_feature.grid(
+            row=2, column=4, sticky="nsew", padx=(10, 0), pady=(10, 5)
         )
 
         self.stylized_text_feature = StylizedTextFeature(
             self.window, self.theme, self.window
         )
         self.stylized_text_feature.grid(
-            row=2, column=4, sticky="nsew", padx=(10, 0), pady=(10, 5)
+            row=2, column=5, sticky="nsew", padx=10, pady=(10, 5)
         )
 
     def _create_info_label(self):
