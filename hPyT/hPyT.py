@@ -98,6 +98,107 @@ accent_color_borders: List[int] = []
 
 WINDOWS_VERSION = float(platform.version().split(".")[0])
 
+# Synchronization Globals
+sync_color_thread: Optional[threading.Thread] = None
+sync_is_running: bool = False
+sync_current_color: Optional[int] = None
+sync_lock = threading.Lock()
+
+
+def stop_sync_if_last():
+    """Checks if any element is still running in sync mode and stops the master if none are."""
+
+    # Check if any window is still listed in either sync dictionary
+    is_title_bar_sync_running = bool(rainbow_title_bar._sync_timer_threads)
+    is_border_sync_running = bool(rainbow_border._sync_timer_threads)
+
+    if not is_title_bar_sync_running and not is_border_sync_running:
+        synchronized_rainbow.stop()
+
+
+# New Synchronization Class
+class synchronized_rainbow:
+    """Manages the single, module-level thread for synchronized color cycling."""
+
+    @classmethod
+    def _color_changer_task(cls, interval: int, color_stops: int) -> None:
+        """The continuous color cycle task for synchronization"""
+
+        global sync_current_color, sync_is_running
+        r, g, b = 200, 0, 0
+
+        while sync_is_running:
+            if r < 255 and g == 0 and b == 0:
+                r = min(255, r + color_stops)
+            elif r == 255 and g < 255 and b == 0:
+                g = min(255, g + color_stops)
+            elif r > 0 and g == 255 and b == 0:
+                r = max(0, r - color_stops)
+            elif g == 255 and b < 255 and r == 0:
+                b = min(255, b + color_stops)
+            elif g > 0 and b == 255 and r == 0:
+                g = max(0, g - color_stops)
+            elif b == 255 and r < 255 and g == 0:
+                r = min(255, r + color_stops)
+            elif b > 0 and r == 255 and g == 0:
+                b = max(0, b - color_stops)
+
+            with sync_lock:
+                sync_current_color = (r << 16) | (g << 8) | b
+
+            ctypes.windll.kernel32.Sleep(interval)
+
+        # When stopping, reset the global color
+        with sync_lock:
+            sync_current_color = None
+
+    @classmethod
+    def get_current_color(cls) -> Tuple[int, int, int]:
+        """Gets the current RGB color from the synchronized master thread."""
+        global sync_current_color
+        with sync_lock:
+            color = sync_current_color
+
+        if color is None:
+            return (0, 0, 0)
+
+        # Convert integer color (BGR format) back to RGB tuple
+        b = (color >> 16) & 0xFF
+        g = (color >> 8) & 0xFF
+        r = color & 0xFF
+        return (r, g, b)
+
+    @classmethod
+    def start(cls, interval: int, color_stops: int) -> None:
+        """Starts the synchronized color thread (Invisible Master)."""
+        global sync_color_thread, sync_is_running
+
+        # Only start if not running
+        if not sync_is_running:
+            sync_is_running = True
+
+            # Use a dummy hwnd (0) as DWM calls are handled externally in sync mode
+            sync_color_thread = threading.Thread(
+                target=cls._color_changer_task,
+                args=(interval, color_stops),
+                daemon=True,
+            )
+            sync_color_thread.start()
+
+    @classmethod
+    def stop(cls) -> None:
+        """Stops the synchronized color thread."""
+        global sync_is_running, sync_color_thread
+        if sync_is_running:
+            sync_is_running = False
+            # Wait for the thread to finish cleanly
+            if (
+                sync_color_thread is not None
+                and threading.current_thread() is not sync_color_thread
+            ):
+                sync_color_thread.join(timeout=0.1)
+            sync_color_thread = None
+
 
 class title_bar:
     """Hide or unhide the title bar of a window."""
@@ -783,6 +884,7 @@ class rainbow_title_bar:
     """Add a rainbow effect to the title bar of a window."""
 
     current_color = None
+    _sync_timer_threads: Dict[int, threading.Thread] = {}  # Tracks sync mode threads
 
     @classmethod
     def start(cls, window: Any, interval: int = 5, color_stops: int = 5) -> None:
@@ -887,11 +989,53 @@ class rainbow_title_bar:
         else:
             raise ValueError("Rainbow title bar is not running on this window.")
 
+    @classmethod
+    def start_sync(cls, window: Any, interval: int = 5, color_stops: int = 5) -> None:
+        """
+        Starts the Title Bar in synchronization mode (as a slave).
+        It uses the synchronized_rainbow master thread for color data.
+        """
+        hwnd: int = module_find(window)
+        if hwnd in cls._sync_timer_threads:
+            raise RuntimeError("Title bar is already running in synchronization mode.")
+
+        # Start the invisible color manager master thread (if not already running)
+        synchronized_rainbow.start(interval, color_stops)
+
+        # Start a timer thread for this window to periodically apply the master color
+        def sync_task(h: int, i: int):
+            while h in cls._sync_timer_threads:
+                rgb = synchronized_rainbow.get_current_color()
+                # Apply color using standard setter
+                title_bar_color.set(h, rgb)
+                ctypes.windll.kernel32.Sleep(i)
+
+        cls._sync_timer_threads[hwnd] = threading.Thread(
+            target=sync_task, args=(hwnd, interval), daemon=True
+        )
+        cls._sync_timer_threads[hwnd].start()
+
+    @classmethod
+    def stop_sync(cls, window: Any) -> None:
+        """
+        Stops the Title Bar synchronization mode.
+        """
+        hwnd: int = module_find(window)
+        if hwnd in cls._sync_timer_threads:
+            del cls._sync_timer_threads[hwnd]
+            title_bar_color.reset(window)
+            stop_sync_if_last()  # Check if master thread should stop
+        else:
+            raise ValueError(
+                "Synchronized rainbow title bar is not running on this window."
+            )
+
 
 class rainbow_border:
     """Add a rainbow effect to the border of a window."""
 
     current_color = None
+    _sync_timer_threads: Dict[int, threading.Thread] = {}  # Tracks sync mode threads
 
     @classmethod
     def start(cls, window: Any, interval: int = 5, color_stops: int = 5) -> None:
@@ -995,6 +1139,49 @@ class rainbow_border:
             rnbbcs.remove(hwnd)
         else:
             raise ValueError("Rainbow border is not running on this window.")
+
+    @classmethod
+    def start_sync(cls, window: Any, interval: int = 5, color_stops: int = 5) -> None:
+        """
+        Starts the Border in synchronization mode (as a slave).
+        It uses the synchronized_rainbow master thread for color data.
+        """
+        hwnd: int = module_find(window)
+        if hwnd in cls._sync_timer_threads:
+            raise RuntimeError(
+                "Rainbow border is already running in synchronization mode."
+            )
+
+        # Start the invisible color manager master thread (if not already running)
+        synchronized_rainbow.start(interval, color_stops)
+
+        # Start a timer thread for this window to periodically apply the master color
+        def sync_task(h: int, i: int):
+            while h in cls._sync_timer_threads:
+                rgb = synchronized_rainbow.get_current_color()
+                # Apply color using standard setter
+                border_color.set(h, rgb)
+                ctypes.windll.kernel32.Sleep(i)
+
+        cls._sync_timer_threads[hwnd] = threading.Thread(
+            target=sync_task, args=(hwnd, interval), daemon=True
+        )
+        cls._sync_timer_threads[hwnd].start()
+
+    @classmethod
+    def stop_sync(cls, window: Any) -> None:
+        """
+        Stops the Border synchronization mode.
+        """
+        hwnd: int = module_find(window)
+        if hwnd in cls._sync_timer_threads:
+            del cls._sync_timer_threads[hwnd]
+            border_color.reset(window)
+            stop_sync_if_last()  # Check if master thread should stop
+        else:
+            raise ValueError(
+                "Synchronized rainbow border is not running on this window."
+            )
 
 
 class window_frame:
