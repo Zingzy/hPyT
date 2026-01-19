@@ -95,6 +95,8 @@ rnbtbs: List[int] = []
 rnbbcs: List[int] = []
 accent_color_titlebars: List[int] = []
 accent_color_borders: List[int] = []
+old_wndprocs: Dict[int, Any] = {}
+new_wndprocs: Dict[int, Any] = {}
 
 WINDOWS_VERSION = float(platform.version().split(".")[0])
 
@@ -130,10 +132,11 @@ class title_bar:
 
             # Default processing for other messages
             return call_window_proc(
-                *map(ctypes.c_uint64, (globals()[old], hwnd, msg, wp, lp))
+                *map(ctypes.c_uint64, (old_wndprocs[hwnd], hwnd, msg, wp, lp))
             )
 
-        old, new = "old_wndproc", "new_wndproc"
+        hwnd: int = module_find(window)
+
         prototype = ctypes.WINFUNCTYPE(
             ctypes.c_uint64,
             ctypes.c_uint64,
@@ -141,8 +144,6 @@ class title_bar:
             ctypes.c_uint64,
             ctypes.c_uint64,
         )
-
-        hwnd: int = module_find(window)
 
         # Get the window and client dimensions
         rect = RECT()
@@ -160,13 +161,13 @@ class title_bar:
         title_bar_height: int = full_height - client_height - border_width
 
         # Override the window procedure if not already done
-        if globals().get(old) is None:
-            globals()[old] = get_window_long(hwnd, GWL_WNDPROC)
+        if old_wndprocs.get(hwnd, 0) == 0:
+            old_wndprocs[hwnd] = get_window_long(hwnd, GWL_WNDPROC)
 
         # Do not remove the top border when on windows 7 or lower
         if WINDOWS_VERSION >= 10.0:  # Windows 10 is version 10.0
-            globals()[new] = prototype(handle)
-            set_window_long(hwnd, GWL_WNDPROC, globals()[new])
+            new_wndprocs[hwnd] = prototype(handle)
+            set_window_long(hwnd, GWL_WNDPROC, new_wndprocs[hwnd])
 
         old_style = get_window_long(hwnd, GWL_STYLE)
         new_style = (old_style & ~WS_CAPTION) | WS_BORDER
@@ -206,9 +207,10 @@ class title_bar:
 
         hwnd: int = module_find(window)
 
-        if globals().get("old_wndproc") is not None:
-            set_window_long(hwnd, GWL_WNDPROC, globals()["old_wndproc"])
-            globals()["old_wndproc"] = None
+        if old_wndprocs.get(hwnd, 0) != 0:
+            set_window_long(hwnd, GWL_WNDPROC, old_wndprocs[hwnd])
+            old_wndprocs.pop(hwnd)
+            new_wndprocs.pop(hwnd)
 
         # Restore the original height if no_span was used
         height_reduction: int = cls._height_reduction.pop(hwnd, 0)
